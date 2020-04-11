@@ -1,6 +1,10 @@
 import React from 'react'
-import { TextInput, View, Button, StyleSheet } from 'react-native'
+import { TextInput, View, Button } from 'react-native'
+import styles from './css/SuggestScreenCss'
+import { observer, inject } from 'mobx-react'
 
+@inject(['profileStore'])
+@observer
 export default class SuggestScreen extends React.Component {
 	constructor(props) {
 		super(props)
@@ -15,8 +19,16 @@ export default class SuggestScreen extends React.Component {
 			text
 		})
 	}
-	handleSubmit = () => {
-		console.log(this.state)
+	handleSubmit = async () => {
+		const { text } = this.state
+		console.log(text)
+		const res = await this.props.profileStore.postMessage({message: text})
+		console.log(res)
+		if(res.msg === 'OK') {
+			// 提交成功弹出框
+			this.props.navigation.navigate('Profile')
+			// this.props.navigation.goBack()
+		}
 	}
 	handelClear = () => {
 		console.log('clear')
@@ -51,32 +63,3 @@ export default class SuggestScreen extends React.Component {
 		)
 	}
 }
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		marginTop: 40,
-		alignItems: 'center',
-		backgroundColor: '#fffffb'
-	},
-	textinput: {
-		width: 340,
-		height: 200,
-		borderColor: '#999d9c',
-		borderWidth: 1,
-		textAlignVertical: 'top'
-	},
-	button: {
-		backgroundColor: '#fcaf17',
-		width: 342,
-		height: 50,
-		marginTop: 20,
-		flex: 0,
-		justifyContent: 'center'
-	},
-	borderRadius: {
-		borderTopLeftRadius: 5,
-		borderTopRightRadius: 5,
-		borderBottomLeftRadius: 5,
-		borderBottomRightRadius: 5
-	}
-})

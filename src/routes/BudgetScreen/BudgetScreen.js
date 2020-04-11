@@ -18,24 +18,27 @@ export class Budget extends React.Component {
 		super(props)
 		this.state = {
 			progress: 0.3,
-			budget: 2000
+			budget: 2000,
+			total_budget: 0
 		}
+	}
+	componentDidMount(){
+		this.props.budgetStore.getBudgetSetting()
 	}
 	getBudget = (type, number) => {
 	}
-	getType = (type = 'month') => {
+	getType = (type = 1) => {
 		const textObj = {
-			year: '年',
-			month: '月',
-			week: '周',
-			day: '日'
+			0: '年',
+			1: '月',
+			2: '周',
 		}
 		return textObj[type]
 	}
 	getItemProgress = (type, item) => {
 		return 0.4
 	}
-	getHeaderText = (type = 'month') => {
+	getHeaderText = (type = 1) => {
 		const text = `本${this.getType(type)}剩余预算`
 		return text
 	}
@@ -49,19 +52,19 @@ export class Budget extends React.Component {
 		}
 		return text
 	}
-	editItem = () => {}
+	editItem = () => { }
 	render() {
 		const { progress } = this.state
 		const { budgetStore } = this.props
-		const { budgetInfo } = budgetStore
-		console.log(111, budgetStore)
+		const { budgetSettings={} } = budgetStore
+
 		return (
 			<ScrollView>
 				<View style={styles.budgetContainer}>
 					<View style={styles.header}>
 						<View style={styles.number}>
-							<Text style={styles.money}>{budgetInfo.budget.totalBudget}</Text>
-							<Text style={styles.numberText}>{this.getHeaderText(budgetInfo.budgetType)}</Text>
+							<Text style={styles.money}>{budgetSettings.total_budget}</Text>
+							<Text style={styles.numberText}>{this.getHeaderText(budgetSettings.budget_type)}</Text>
 						</View>
 						<View style={styles.progressWrapper}>
 							<Progress.Bar
@@ -84,7 +87,10 @@ export class Budget extends React.Component {
 							data={budgetList}
 							renderItem={({ item }) => {
 								return (
-									<View key={Math.random()} style={styles.item} onPress={() => this.editItem()}>
+									<View
+										keyExtractor={(item) => Math.random()}
+										style={styles.item}
+										onPress={() => this.editItem()}>
 										<MaterialCommunityIcons
 											name={item.icon}
 											size={20}
@@ -99,16 +105,16 @@ export class Budget extends React.Component {
 													<Text style={styles.remainMoney}>剩余200</Text>
 												}
 											</View>
-												<Progress.Bar
-													progress={this.getItemProgress()}
-													color="orange"
-													unfilledColor="#e0e0e0"
-													borderWidth={0}
-													width={progressInfo.itemWidth}
-													style={styles.itemProgress}
-												/>
+											<Progress.Bar
+												progress={this.getItemProgress()}
+												color="orange"
+												unfilledColor="#e0e0e0"
+												borderWidth={0}
+												width={progressInfo.itemWidth}
+												style={styles.itemProgress}
+											/>
 											<View style={styles.itemInfo}>
-												<Text style={styles.itemInfoText}>{this.getItemText(budgetInfo.budgetType)}</Text>
+												<Text style={styles.itemInfoText}>{this.getItemText(budgetSettings.budget_type)}</Text>
 											</View>
 										</View>
 										<RightArrow style={styles.itemIcon} />
@@ -122,13 +128,22 @@ export class Budget extends React.Component {
 		)
 	}
 }
+
+@inject(["budgetStore"]) // 注入对应的 store
+@observer
 class BudgetScreen extends React.Component {
 	constructor(props) {
 		super(props)
 	}
 	handelSettingBudget = () => {
 		const { navigation } = this.props
-		navigation.navigate('BudgetSetting')
+		navigation.navigate('BudgetContainer', {
+			screen: 'BudgetSetting',
+			params: {
+				// navigation,
+				// init: this.initScreen.bind(this)
+			}
+		})
 	}
 	render() {
 		return (

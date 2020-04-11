@@ -1,11 +1,19 @@
 import React from 'react'
 import { View, Text, Image, FlatList, TouchableHighlight, Modal, Share } from 'react-native'
-import indexStyle from '../indexCss'
+// import styles from '../indexCss'
 import Util from '../../utils/deviceInfo'
 import { profileList, recommendList } from '../../utils/const'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import RightArrow from '../../components/RightArrow'
+import styles from './css/ProfileScreenCss'
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import * as Progress from 'react-native-progress'
+import storage from '../../utils/storage'
+import { request, get } from '../../utils/fetch'
+import { observer, inject } from 'mobx-react'
 
+@inject(["homeStore"])
+@observer
 class ProfileScreen extends React.Component {
 	constructor(props) {
 		super(props)
@@ -14,8 +22,33 @@ class ProfileScreen extends React.Component {
 			deviceHeight: Util.size.height,
 			iconSize: 20,
 			showModal: false,
-			shareResult: ''
+			shareResult: '',
+			loginStatus: 1,
+			userinfo: undefined
 		}
+	}
+	async componentDidMount() {
+		// this.props.homeStore.getTestBill()
+		// this.props.homeStore.editBillInfo()
+		storage.remove({key: 'user'})
+		let status, res
+		try {
+			res = await storage.load({
+				key: 'user'
+			})
+			if(res) {
+				const { userid } = res
+				status = 0
+				console.log(userid)
+			}
+		}catch(e) {
+			status = 1
+			res = undefined
+		}
+		this.setState({
+			loginStatus: status,
+			userinfo: res
+		})
 	}
 	handlePress = (e, key) => {
 		if (key === 'Recommend') {
@@ -23,7 +56,9 @@ class ProfileScreen extends React.Component {
 				showModal: true
 			})
 		} else {
-			this.props.navigation.navigate(key)
+			this.props.navigation.navigate('ProfileContainer', {
+				screen: key
+			})
 		}
 	}
 	handleScan = () => {
@@ -41,7 +76,7 @@ class ProfileScreen extends React.Component {
 					url: 'https://weixin.qq.com/'
 				})
 				if (result.action === Share.sharedAction) {
-					if (result.activityType){
+					if (result.activityType) {
 						this.setState({
 							shareResult: 'shared with activitytype' + result.activityType
 						})
@@ -50,44 +85,80 @@ class ProfileScreen extends React.Component {
 							shareResult: 'result: shared'
 						})
 					}
-				} else if (result.action === Share.dismissedAction){
+				} else if (result.action === Share.dismissedAction) {
 					this.setState({
 						shareResult: 'failed share'
 					})
-				} 
-			} catch(e) {
+				}
+			} catch (e) {
 				console.log('e', e)
 			}
-			console.log(this.state.shareResult)
+			// console.log(this.state.shareResult)
 		}
+	}
+	handleLogin = () => {
+		const { userinfo, loginStatus } = this.state
+		this.props.navigation.navigate('ProfileContainer', {
+			screen: 'Regist'
+		})
 	}
 	render() {
 		const { iconSize } = this.state
 		return (
 			<>
-				<View style={indexStyle.container}>
-					<View style={indexStyle.head}>
-						<Image
-							source={require('./img/icon-76.png')}
-							style={[indexStyle.img, { width: Util.size.width }]}
-						/>
+				<View style={styles.container}>
+					<View style={styles.head}>
+						<TouchableHighlight
+						underlayColor="#fff"
+						style={styles.loginIcon}
+						onPress={() => this.handleLogin()}>
+							<Image
+								style={styles.unlogin}
+								resizeMethod="auto"
+								source={require('./img/unlogin.png')} />
+						</TouchableHighlight>
+						<View style={styles.loginInfo}>
+							<View style={styles.loginUser}>
+								<View style={styles.loginText}>
+									<Text style={styles.loginName}>邹邹</Text>
+								</View>
+								<View style={styles.signin}>
+									<Text style={styles.signinText}>签到</Text>
+									<FontAwesome name="pencil-square-o" size={20} color="#B5B5B5" />
+								</View>
+							</View>
+							<View style={styles.progressWrapper}>
+								<Progress.Bar
+									progress={0.4}
+									unfilledColor="#f2f2f2"
+									borderRadius={10}
+									borderWidth={0}
+									width={Util.size.width * 0.8 - 20}
+									height={8}
+									style={styles.progress}
+								/>
+							</View>
+							<View style={styles.progressInfo}>
+								<Text style={styles.progressDays}>坚持几张:0天</Text>
+							</View>
+						</View>
 					</View>
-					<View style={indexStyle.main}>
+					<View style={styles.main}>
 						<FlatList
 							data={profileList}
 							renderItem={({ item }) => {
 								return (
 									<TouchableHighlight
-										key={item.key}
+										keyExtractor={(item) => Math.random()}
 										onPress={e => this.handlePress(e, item.key)}>
-										<View style={indexStyle.listItem}>
+										<View style={styles.listItem}>
 											<Ionicons
 												name={item.icon}
 												size={iconSize}
 												color={item.color}
-												style={indexStyle.itemIcon}
+												style={styles.itemIcon}
 											/>
-											<Text style={indexStyle.itemLabel}>{item.label}</Text>
+											<Text style={styles.itemLabel}>{item.label}</Text>
 											<RightArrow />
 										</View>
 									</TouchableHighlight>
@@ -96,19 +167,19 @@ class ProfileScreen extends React.Component {
 						/>
 					</View>
 					<Modal
-						style={indexStyle.modal}
+						style={styles.modal}
 						animationType="slide"
 						transparent={true}
 						visible={this.state.showModal}>
-						<View style={indexStyle.modalContent}>
+						<View style={styles.modalContent}>
 							<FlatList
 								data={recommendList}
-								renderItem={({ item }) => {
+								renderItem={({ item, index }) => {
 									return (
 										<TouchableHighlight
-											key={item.key}
+											keyExtractor={(item, index) => index.toString()}
 											onPress={e => this.handleRecommend(e, item.label)}>
-											<View style={indexStyle.recommendItem}>
+											<View style={styles.recommendItem}>
 												<Text>{item.label}</Text>
 											</View>
 										</TouchableHighlight>
@@ -123,19 +194,3 @@ class ProfileScreen extends React.Component {
 	}
 }
 export default ProfileScreen
-
-/**
- * .prettierrc.js
- * module.exports = {
-  bracketSpacing: true, // 对象大括号之间是否有空格
-  jsxBracketSameLine: true, // jsx的>在同一行
-  singleQuote: true, // 单引号
-  trailingComma: 'none', // 是否使用尾逗号, none | es5 | all
-  tabWith: 2,
-  useTabs: true,
-	semi: false, // 分号,
-  arrowFunctionParentheses: 'avoid',
-  endOfLine: 'auto'
-};
-
- */

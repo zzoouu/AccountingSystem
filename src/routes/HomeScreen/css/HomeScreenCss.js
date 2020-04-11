@@ -93,6 +93,11 @@ const styles = StyleSheet.create({
 	money: {
 		flex: 1,
 		textAlign: 'right'
+	},
+	unlogin: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center'
 	}
 })
 export default styles

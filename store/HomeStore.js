@@ -1,4 +1,7 @@
 import { observable, action, computed } from 'mobx'
+import { get, post } from '../src/utils/fetch'
+import Router from '../router'
+
 const getItemList = () => {
 	return [
 		{
@@ -103,9 +106,10 @@ const getItemList = () => {
 		}
 	]
 }
-
+const url =  'http://localhost:7001/bill'
 class HomeStore {
 	@observable list
+	@observable records = []
 	@computed get itemList() {
 		return this.list.map(v => {
 			return {
@@ -117,10 +121,42 @@ class HomeStore {
 	constructor() {
 		this.list = getItemList()
 	}
-	// @action
-	// plus = () => {
-	// 	this.num += 1
-	// }
+	@action
+	getUserinfoById = (userid) => {
+		// fetch
+		// this.list = res
+	}
+
+	@action
+	getTestBill = async (callBackSuccess, callBackError) => {
+		const res = await get(url, callBackSuccess, callBackError)
+		return res
+	}
+	@action
+	editBillInfo = async (callBackSuccess, callBackError) => {
+		try {
+			let params = {
+				price: 128,
+				label: '测试post'
+			}
+			let url = 'http://localhost:7001/bill/editBill'
+			const res = await post(url, params)
+			return res
+		}catch(e) {
+			console.log('e', e)
+			return e
+		}
+	}
+	@action
+	getRecords = async () => {
+		try {
+			const res = await get({
+				url: `${Router.billUrl.bill}`
+			})
+			this.records = res.data.data
+		} catch(e) {
+		}
+	}
 }
 const homeStore = new HomeStore()
 export default homeStore

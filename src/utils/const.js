@@ -52,6 +52,28 @@ export const recommendList = [
 		key: '4'
 	}
 ]
+export const editRecordsList = [
+	{
+		label: '分享账本',
+		key: '0'
+	},
+	{
+		label: '编辑账本',
+		key: '1'
+	},
+	{
+		label: '账本成员',
+		key: '2'
+	},
+	{
+		label: '删除账本',
+		key: '3'
+	},
+	{
+		label: '取消',
+		key: '4'
+	}
+]
 export const SettingList = [
 	{
 		label: '清空缓存',
@@ -131,16 +153,79 @@ export const budgetTypeObj = [
 	{
 		year: '年',
 		label: '年预算',
-		key: 'year'
+		key: 0
 	},
 	{
 		month: '月',
 		label: '月预算',
-		key: 'month'
+		key: 1
 	},
 	{
 		week: '周',
 		label: '周预算',
-		key: 'week'
+		key: 2
 	}
+]
+
+// export const numKeyboard = [
+// 	'7', '8', '9', '-', '4', '5', '6', '+',
+// 	'1', '2', '3', '=', '.', '0', '取消', 'OK'
+// ]
+export const numKeyboard = [
+	{
+		label: '7',
+	},
+	{
+		label: '8',
+	},
+	{
+		label: '9',
+	},
+	{
+		label: '-',
+	},
+	{
+		label: '4',
+	},
+	{
+		label: '5',
+	},
+	{
+		label: '6',
+	},
+	{
+		label: '+',
+	},
+	{
+		label: '1',
+	},
+	{
+		label: '2',
+	},
+	{
+		label: '3',
+	},
+	{
+		label: '=',
+	},
+	{
+		label: '.',
+	},
+	{
+		label: '0',
+	},
+	{
+		label: '取消',
+	},
+	{
+		label: 'OK',
+	}
+]
+export const billColors = [
+	'#FFA500',
+	'#FF8C69',
+	'#FF4040',
+	'#B3EE3A',
+	'#AEEEEE',
+	'#9370DB'
 ]

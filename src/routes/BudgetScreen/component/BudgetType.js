@@ -12,23 +12,25 @@ class BudgetType extends React.Component {
 		super(props)
 	}
 	setType = type => {
-		this.props.budgetStore.setBudgetType(type)
+		const setTypeState = this.props.route.params.setTypeState
+		setTypeState(type)
 		this.props.navigation.navigate('BudgetSetting')
 	}
 	render() {
-		console.log(111, this.props)
 		return (
 			<FlatList
 				data={budgetTypeObj}
-				renderItem={({item}) => {
+				renderItem={({ item }) => {
 					return (
-						<TouchableHighlight onPress={() => this.setType(item.key)}>
+						<TouchableHighlight
+							keyExtractor={(item) => Math.random()}
+							onPress={() => this.setType(item.key)}>
 							<View style={styles.container}>
-							<Text style={styles.text}>{item.label}</Text>
-							{
-								item.key === this.props.budgetStore.budgetInfo.budgetType &&
+								<Text style={styles.text}>{item.label}</Text>
+								{
+									item.key === this.props.route.params.budget_type &&
 									<Ionicons style={styles.icon} name="md-checkmark" size={24} color="#0080FF" />
-							}
+								}
 							</View>
 						</TouchableHighlight>
 					)

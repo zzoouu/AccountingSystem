@@ -14,7 +14,7 @@ class RootsBar extends React.Component {
 		return (
 			<>
 				<Tab.Navigator
-					initialRouteName="EditBill"
+					initialRouteName="Profile"
 					screenOptions={({ route }) => ({
 						tabBarIcon: ({ focused, color, size }) => {
 							let iconName

@@ -1,8 +1,8 @@
 import React from 'react'
 import { Text, View, Animated, Easing } from 'react-native'
 import { RNCamera } from 'react-native-camera'
-import idnexStyle from '../indexCss'
-import indexStyle from '../indexCss'
+// import styles from '../indexCss'
+import styles from './css/ScanScreenCss'
 
 class ScanScreen extends React.Component {
 	constructor(props) {
@@ -35,22 +35,22 @@ class ScanScreen extends React.Component {
 	}
 	render() {
 		return (
-			<View style={idnexStyle.scanWrap}>
+			<View style={styles.scanWrap}>
 				<RNCamera
 					ref={ref => {
 						this.camera = ref
 					}}
-					style={idnexStyle.preview}
+					style={styles.preview}
 					type={RNCamera.Constants.Type.back}
 					flashMode={RNCamera.Constants.FlashMode.on}
 					onBarCodeRead={this.onBarCodeRead}>
-					<View style={indexStyle.rectangleContainer}>
-						<View style={indexStyle.rectangle} />
+					<View style={styles.rectangleContainer}>
+						<View style={styles.rectangle} />
 						<Animated.View 
 						style={[
-							indexStyle.border,
+							styles.border,
 							{ transform: [{ translateY: this.state.moveAnim }] }]}/>
-						<Text style={indexStyle.rectangleText}>将二维码放入框内，即可自动扫描</Text>
+						<Text style={styles.rectangleText}>将二维码放入框内，即可自动扫描</Text>
 					</View>
 				</RNCamera>
 			</View>
