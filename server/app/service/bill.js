@@ -15,7 +15,8 @@ class BillService extends Service {
 		const {
 			billName: bill_name,
 			isShared,
-			color
+			color,
+			members
 		} = info
 		const uuid = createUuid()
 		const searchName = await this.app.mysql.get('bills', { bill_name })
@@ -24,11 +25,12 @@ class BillService extends Service {
 				bill_id: uuid,
 				bill_name,
 				isShared,
-				color
+				color,
+				members: members.join(',')
 			})
 			if (res.affectedRows === 1) {
 				return {
-					msg: 'OK',
+					code: 1,
 					bill_id: uuid
 				}
 			}
@@ -39,8 +41,17 @@ class BillService extends Service {
 			}
 		}
 	}
-	async getBills() {
-		const bills = await this.app.mysql.select('bills')
+	async getBills(username) {
+		console.log(username, 'username')
+		// 模糊查询
+		const sql = `select * from bills where members like "%${username}%"`
+		const bills = await this.app.mysql.query(sql)
+		// const bills = await this.app.mysql.select('bills')
+		// const res = bills.filter(bill => {
+		// 	const { members } = bill
+		// 	const arr = members.split(',')
+		// 	return arr.includes(username)
+		// })
 		return {
 			msg: 'OK',
 			bills
@@ -75,8 +86,18 @@ class BillService extends Service {
 			record_id
 		}
 	}
+	async getBillInfoById(bill_id) {
+		const billinfo = await this.app.mysql.select('bills', {
+			where: { bill_id }
+		})
+		if (billinfo.length) {
+			return {
+				msg: 'OK',
+				data: billinfo[0]
+			}
+		}
+	}
 	async getBillById(bill_id) {
-		console.log(bill_id)
 		const billinfo = await this.app.mysql.select('bill', {
 			where: { bill_id },
 			orders: [['record_date', 'desc']]
@@ -86,13 +107,25 @@ class BillService extends Service {
 			data: billinfo
 		}
 	}
-	async getBillRecords() {
-		const records = await this.app.mysql.select('bill', {
-			orders: [[ 'record_date', 'desc' ]]
-		})
+	async getBillRecords(userinfo) {
+		// console.log('records', userinfo)
+		let data
+		if (userinfo) {
+			const records = await this.app.mysql.select('bill', {
+				where: {
+					author: userinfo.username
+				},
+				orders: [[ 'record_date', 'desc' ]]
+			})
+			// const records = await this.app.mysql.query(sql)
+			// console.log('records', records)
+			data = records
+		} else {
+			data = []
+		}
 		return {
 			msg: 'OK',
-			data: records
+			data
 		}
 	}
 	async deleteRecord(record_id) {
@@ -101,15 +134,37 @@ class BillService extends Service {
 		})
 		return record_id
 	}
-	async deleteBill(bill_id) {
-		const res = await this.app.mysql.delete('bills', {
-			bill_id
-		})
+	async deleteBill(info) {
+		const { bill_id, author, members } = info
+		console.log('mem', info)
+		const len = members.split(',').length
+		console.log('len', len)
+		if (len > 1) {
+			// 共享账本 则不删除账本，只是该用户不再拥有该账本
+			const arr = members.split(',')
+			const newMembers = arr.filter(item => item !== author)
+			const res = await this.changeBill({ bill_id, author, members: newMembers.join(',') })
+			// 删除账本中该用户的单笔记录
+			const delBill = await this.app.mysql.select('bill', {
+				where: {
+					bill_id,
+					author
+				}
+			})
+			console.log('delBill', delBill)
+		} else {
+			console.log(bill_id)
+			// 单人账本，直接删除
+			const res = await this.app.mysql.delete('bills', {
+				bill_id
+			})
+		}
+		// const sql = `delete from bills where bill_id = ${bill_id} and members like "%${author}%"`
 		return bill_id
 	}
 	async changeBill(info) {
-		const { bill_id, ...params } = info
-		console.log('params', params)
+		const { bill_id, author, ...params } = info
+		console.log('params', params, bill_id)
 		const res = await this.app.mysql.update('bills', params, {
 			where: {
 				bill_id

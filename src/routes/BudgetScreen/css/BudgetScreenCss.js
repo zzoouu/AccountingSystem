@@ -58,38 +58,39 @@ export const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'center',
-		height: 70
-		// marginBottom: 10
+		// height: 70,
+		borderBottomWidth: 0.5,
+		borderBottomColor: '#E0E0E0'
 	},
 	itemLabel: {
 		flex: 10,
-		justifyContent: 'center'
+		justifyContent: 'space-around'
 	},
 	itemIcon: {
 		flex: 1,
 		textAlign: 'center'
 	},
 	itemlabelText: {
-		flex: 3,
+		height: 40,
 		fontSize: 16,
 		flexDirection: 'row',
-		alignItems: 'center'
+		alignItems: 'center',
+		justifyContent: 'space-between',
 	},
 	remainMoney: {
-		flex: 1,
-		textAlign: 'right',
 		fontSize: 12,
 		color: '#999d9c'
 	},
 	itemProgress: {
-		flex: 0
+		// flex: 0
 	},
-	itemInfo: {
-		flex: 3,
-		justifyContent: 'center'
+	setInfo: {
+		flexDirection: 'row',
+		height: 35,
+		alignItems: 'center',
 	},
 	itemInfoText: {
 		fontSize: 12,
-		color: '#102b6a'
+		color: '#BB3D00'
 	}
 })

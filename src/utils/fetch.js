@@ -6,7 +6,7 @@ export const request = (url, method, body, callBackSuccess, callBackError) => {
 				mode: 'cors'
 			}
 			let params
-			if ((method === 'POST') || (method === 'PUT')) {
+			if ((method === 'POST') || (method === 'PUT') || (method === 'DELETE')) {
 				params = Object.assign({}, config, {
 					body: JSON.stringify(body),
 					headers: {
@@ -16,18 +16,6 @@ export const request = (url, method, body, callBackSuccess, callBackError) => {
 			} else {
 				params = config
 			}
-			// switch (method) {
-			// 	case 'POST':
-			// 		params = Object.assign({}, config, {
-			// 			body: JSON.stringify(body),
-			// 			headers: {
-			// 				'Content-Type': 'application/json'
-			// 			}
-			// 		})
-			// 		break
-			// 	default:
-			// 		params = config
-			// }
 			const res = await fetch(url, params)
 			resolve(res.json())
 		} catch (e) {
@@ -48,10 +36,11 @@ export const get = (params) => {
 export const del = (params) => {
 	const {
 		url,
+		body,
 		callBackSuccess,
 		callBackError
 	} = params
-	return request(url, 'DELETE', {}, callBackSuccess, callBackError)
+	return request(url, 'DELETE', body, callBackSuccess, callBackError)
 }
 
 export const post = (params) => {

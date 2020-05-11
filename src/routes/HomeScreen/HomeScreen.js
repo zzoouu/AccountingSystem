@@ -5,9 +5,8 @@ import DateTimePicker from '@react-native-community/datetimepicker'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
+import MyIconFont from '../../components/icon/iconfont'
 import { observer, inject } from 'mobx-react'
-import storage, { getStorage } from '../../utils/storage'
-import homeStore from '../../../store/HomeStore'
 
 // @inject(['homeStore']) // 注入对应的 store
 @inject('homeStore', 'billStore') // 注入对应的 store
@@ -20,23 +19,18 @@ class HomeScreen extends React.Component {
 			date: new Date(),
 			timer: undefined,
 			selectedTime: undefined,
-			userStatus: 2, // 0: 未登录 1: 已登录 2: 登录过期
-			statusText: undefined,
 			records: [],
 		}
 	}
-	async componentDidMount() {
+	componentDidMount() {
+		this.props.homeStore.getStatus()
+		this.initBillRecords()
+	}
+	initBillRecords = async () => {
 		await this.props.homeStore.getRecords()
-		this.formatBillRecords()
-		storage.save({
-			key: 'user',
-			data: {
-				userid: 'zouzou',
-				token: 'some token'
-			},
-			expires: 1000 * 3600 * 24 * 30
+		this.setState({
+			records: this.props.homeStore.records
 		})
-		this.getStorage()
 	}
 	formatBillRecords = () => {
 		const { records } = this.props.homeStore
@@ -101,7 +95,7 @@ class HomeScreen extends React.Component {
 		let income = 0
 		let pay = 0
 		let owe = 0
-		records.map(item => {
+		records.length && records.map(item => {
 			item.data.map(record => {
 				const { money, record_type } = record
 				if (record_type === 1) {
@@ -119,44 +113,24 @@ class HomeScreen extends React.Component {
 		}
 	}
 	getMoneyPrefix = type => {
-		switch (type) {
-			case 1:
-				return '+'
-			default:
-				return '-'
-		}
+		return type === 1 ? '+' : '-'
 	}
-	getStorage = async () => {
-		let userStatus, statusText
-		try {
-			const res = await storage.load({ key: 'username' })
-			if (res) {
-				// console.log('res', res)
-				const { userid } = res
-				userStatus = 1
-				// getUserinfoById(userid)
+	refreshRecords = () => {
+		this.props.homeStore.getRecords()
+	}
+	editRecord = data => {
+		this.props.navigation.navigate('BillContainer', {
+			screen: 'RecordInfo',
+			params: {
+				recordInfo: data,
+				bill_id: data.bill_id,
+				refreshHomeRecords: this.initBillRecords.bind(this)
 			}
-		} catch (e) {
-			switch (e.name) {
-				case 'NotFoundError':
-					userStatus = 0
-					statusText = '您还未登录，请点击前往登录~'
-					break
-				case 'ExpiredError':
-					userStatus = 2
-					statusText = '您的登录信息已经过期，请点击重新登录~'
-					break
-			}
-		}
-		this.setState({
-			userStatus,
-			statusText
 		})
 	}
-
 	render() {
 		const { year, month } = this.getTime(this.state.date)
-		const { userStatus, statusText, records } = this.state
+		const { records, userStatus, statusText } = this.props.homeStore
 		const sumup = this.sumup()
 		return (
 			<View style={styles.container}>
@@ -181,7 +155,6 @@ class HomeScreen extends React.Component {
 					</View>
 					<View style={[styles.flexRow, { backgroundColor: '#EEAD0E', flex: 1.2 }]}>
 						<TouchableHighlight
-							// onPress={() => this.props.navigation.navigate('Bills', {choseType: 'show'})}
 							onPress={() => this.props.navigation.navigate('BillContainer',
 								{
 									screen: 'Bills',
@@ -194,22 +167,35 @@ class HomeScreen extends React.Component {
 								<Ionicons name="md-book" size={20} color="#AD5A5A" />
 							</>
 						</TouchableHighlight>
-						<View style={styles.iconItem}>
-							<Text style={styles.fontIcon}>报表</Text>
-							<Ionicons name="ios-pie" size={20} color="#AD5A5A" />
-						</View>
+						{/* <View style={styles.iconItem}> */}
+						<TouchableHighlight
+							style={styles.iconItem}
+							underlayColor="#EEAD0E"
+							onPress={() => this.props.navigation.navigate('BillContainer', {
+								screen: 'Charts'
+							})}
+						>
+							<>
+								<Text style={styles.fontIcon}>报表</Text>
+								<Ionicons name="ios-pie" size={20} color="#AD5A5A" />
+							</>
+						</TouchableHighlight>
 					</View>
 				</View>
 				{/* 区分登录和维登录状态 */}
-				{/* {
+				{
 					userStatus !== 1 && (
-						<TouchableHighlight onPress={() => navigation.navigate('Profile')} style={styles.unlogin}>
+						<TouchableHighlight
+							onPress={() => this.props.navigation.navigate('Profile', {
+								initHomeRecords: this.initBillRecords.bind(this)
+							})}
+							style={styles.unlogin}>
 							<Text>{statusText}</Text>
 						</TouchableHighlight>
 					)
-				} */}
+				}
 				{
-					userStatus !== 1 && (
+					userStatus === 1 && (
 						records.length !== 0 ?
 							<FlatList
 								data={records}
@@ -221,6 +207,7 @@ class HomeScreen extends React.Component {
 									return (
 										<View
 											keyExtractor={(item, index) => index.toString()}
+											key={Math.random()}
 										>
 											<View style={styles.itemBar}>
 												<Text>{`${year}年${month}月${day}日`}</Text>
@@ -232,11 +219,13 @@ class HomeScreen extends React.Component {
 											{
 												item.data.map(v => {
 													return (
-														<View style={styles.list}>
-															<MaterialIcons style={styles.listIcon} name={v.icon} size={20} color="#AD5A5A" />
-															<Text style={styles.itemText}>{v.record_name}</Text>
-															<Text style={styles.money}>{`${this.getMoneyPrefix(v.record_type)} ${v.money}`}</Text>
-														</View>)
+														<TouchableHighlight onPress={() => this.editRecord(v)} key={Math.random()}>
+															<View style={styles.list}>
+																<MyIconFont style={styles.listIcon} name={v.icon} size={20} color="#AD5A5A" />
+																<Text style={styles.itemText}>{v.record_name}</Text>
+																<Text style={styles.money}>{`${this.getMoneyPrefix(v.record_type)} ${v.money}`}</Text>
+															</View>
+														</TouchableHighlight>)
 												})
 											}
 										</View>
@@ -248,8 +237,6 @@ class HomeScreen extends React.Component {
 							</View>
 					)
 				}
-
-
 				<Modal
 					animationType="slide"
 					transparent={true}

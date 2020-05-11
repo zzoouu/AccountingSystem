@@ -58,6 +58,16 @@ export const getStorage = (key, id) => {
 	return ret
 }
 
+export const getUserinfo = async () => {
+	try {
+		const res = await storage.load({
+			key: 'userinfo'
+		})
+		return res
+	} catch(e) {
+	}
+}
+
 // storage.remove({key: 'user'})
 
 export default storage

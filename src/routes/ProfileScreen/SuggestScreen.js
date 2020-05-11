@@ -14,34 +14,54 @@ export default class SuggestScreen extends React.Component {
 		}
 	}
 	handelTextChange(text) {
-		console.log(text)
-		this.setState({
-			text
-		})
+		const { flag } = this.state
+		if (flag) {
+			this.setState({
+				flag: false,
+				text: ''
+			})
+		} else {
+			this.setState({
+				text
+			})
+		}
 	}
 	handleSubmit = async () => {
-		const { text } = this.state
-		console.log(text)
-		const res = await this.props.profileStore.postMessage({message: text})
-		console.log(res)
-		if(res.msg === 'OK') {
-			// 提交成功弹出框
-			this.props.navigation.navigate('Profile')
-			// this.props.navigation.goBack()
+		const { text, flag } = this.state
+		const { profileStore, route : {
+			params: {
+				userinfo
+			}
+		} } = this.props
+		console.log(userinfo)
+		if (!flag) {
+			this.setState({
+				flag: true,
+				text: '请输入您的宝贵意见'
+			})
+		} else {
+			const res = await profileStore.postMessage({
+				message: text,
+				_id: userinfo._id
+			})
+			if(res.code === 1) {
+				// 提交成功弹出框
+				this.props.navigation.navigate('Profile')
+			}
 		}
 	}
 	handelClear = () => {
-		console.log('clear')
 		this.setState({
 			defaultText: '请输入您的宝贵意见',
 			text: ''
 		})
 	}
 	render() {
+		const { text, flag, defaultText } = this.state
 		return (
 			<View style={styles.container}>
 				<TextInput
-					style={[styles.textinput, styles.borderRadius]}
+					style={[styles.textinput, styles.borderRadius, flag && { color: 'red' }]}
 					placeholder={this.state.defaultText}
 					// placeholderTextColor
 					value={this.state.text}
@@ -51,6 +71,7 @@ export default class SuggestScreen extends React.Component {
 					enablesReturnKeyAutomatically={true}
 					// blurOnSubmit={false}
 					onChangeText={text => this.handelTextChange(text)}
+					onFocus={() => {this.setState({text: '', flag: false})}}
 				/>
 				<View style={[styles.button, styles.borderRadius]}>
 				<Button

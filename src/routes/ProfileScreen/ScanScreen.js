@@ -26,12 +26,22 @@ class ScanScreen extends React.Component {
 	}
 	//  识别二维码,处理扫描结果
 	onBarCodeRead = (result) => {
-		const { navigate } = this.props.navigation
-		const { data } = result
-		navigate('Home', {
-			url: data
-		})
-		// console.log('san', data, result)
+		const { navigation } = this.props
+		const qrType = 'org.iso.QRCode'
+		// console.log(result)
+		if (result) {
+			if (result.type === qrType) {
+				navigation.navigate('BillContainer', {
+					screen: 'Bills',
+					params: {
+						shareInfo: JSON.parse(result.data),
+						choseType: 'show'
+					}
+				})
+			} else {
+				// modal 请重新扫描
+			}
+		}
 	}
 	render() {
 		return (

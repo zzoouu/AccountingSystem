@@ -5,6 +5,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { billColors } from '../../../utils/const'
 import ButtonWrapper from '../../../components/Button/Button'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import { getUserinfo } from '../../../utils/storage'
 import { observer, inject } from 'mobx-react'
 
 @inject(["billStore"])
@@ -19,8 +20,11 @@ class AddBill extends React.Component {
 			isShared: !!(billInfo.isShared) || true,
 			chosedColor: billInfo.color || billColors[0],
 			placeholder: '请输入账本名称',
-			warnText: undefined
+			warnFlag: false
 		}
+	}
+	componentDidMount() {
+		// console.log(this.props)
 	}
 	getShareIcon = () => {
 		return !this.state.isShared ? "toggle-switch-off-outline" : "toggle-switch"
@@ -31,6 +35,19 @@ class AddBill extends React.Component {
 			feedBack: undefined
 		})
 	}
+	handleBillName = text => {
+		const { warnFlag } = this.state
+		if (warnFlag) {
+			this.setState({
+				warnFlag: false,
+				billName: ''
+			})
+		} else {
+			this.setState({
+				billName: text
+			})
+		}
+	}
 	createBill = async () => {
 		const {
 			billName,
@@ -39,7 +56,10 @@ class AddBill extends React.Component {
 		} = this.state
 		// console.log(billName, isShared, color)
 		if (!billName) {
-			this.state.warnText = '请输入账本名称'
+			this.setState({
+				billName: '请输入账本名称',
+				warnFlag: true
+			})
 		} else {
 			const { params } = this.props.route
 			if (params) {
@@ -54,32 +74,34 @@ class AddBill extends React.Component {
 				refresh()
 				this.props.navigation.goBack()
 			} else {
-				const res = await this.props.billStore.createBill({ billName, isShared, color })
-				if (res.msg === 'OK') {
-					// this.props.navigation.navigate('Bills')
+				const userinfo = await getUserinfo()
+				const members = [ userinfo.username ]
+				const res = await this.props.billStore.createBill({ billName, isShared, color, members })
+				if (res.code === 1) {
 					this.props.navigation.navigate('BillContainer', {
 						screen: 'Bills'
 					})
 				} else {
 					this.setState({
-						feedBack: res.msg
+						warnFlag: true,
+						billName: res.msg
 					})
-					// console.log(this.state)
 				}
 			}
 		}
 	}
 	render() {
-		const { placeholder, warnText, billName, chosedColor } = this.state
+		const { placeholder, billName, chosedColor, warnFlag } = this.state
 		return (
 			<View style={styles.container}>
 				<View style={styles.head}>
 					<View style={styles.billName}>
-						<Text style={styles.billNameText}>账本名称</Text>
+						<Text style={[styles.billNameText]}>账本名称</Text>
 						<TextInput
-							style={styles.billNameInput}
+							style={[styles.billNameInput, warnFlag && { color: 'red'} ]}
 							// onChangeText={(text) => console.log(text)}
-							onChangeText={(text) => this.setState({ billName: text })}
+							onChangeText={(text) => this.handleBillName(text)}
+							onFocus={() => {this.setState({warnFlag: false, billName: ''})}}
 							value={billName}
 							placeholder={placeholder} />
 					</View>

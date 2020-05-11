@@ -14,9 +14,7 @@ class BudgetController extends Controller {
 			}
 			ctx.set('Access-Control-Allow-Method', '*')
 			ctx.set('Access-Control-Allow-Origin', '*')
-		} catch(e) {
-
-		}
+		} catch (e){}
 	}
 	async getBudget() {
 		try {
@@ -32,11 +30,34 @@ class BudgetController extends Controller {
 			console.log('e', e)
 		}
 	}
-	async editBudgetInfo(){
-
+	async editBudgetInfo() {
+		try {
+			const { ctx } = this
+			const { userinfo } = ctx.session
+			const info = ctx.request.body
+			const res = await ctx.service.budget.editBudgetInfo(info, userinfo)
+			ctx.body = {
+				status: 200,
+				data: res
+			}
+			ctx.set('Access-Control-Allow-Method', '*')
+			ctx.set('Access-Control-Allow-Origin', '*')
+		} catch (e){}
 	}
-	async getBudgetInfo(){
-
+	async getBudgetInfo() {
+		try {
+			const { ctx } = this
+			const { userinfo } = ctx.session
+			const res = await ctx.service.budget.getBudgetInfo(userinfo)
+			ctx.body = {
+				status: 200,
+				data: res
+			}
+			ctx.set('Access-Control-Allow-Origin', '*')
+			ctx.set('Access-Control-Allow-Method', '*')
+		} catch (e) {
+			console.log('get budget info e', e)
+		}
 	}
 }
 module.exports = BudgetController

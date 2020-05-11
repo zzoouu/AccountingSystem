@@ -26,17 +26,18 @@ export default class BudgetSetting extends React.Component {
 		const { budgetSettings = {} } = this.props.budgetStore
 		// console.log('in', budgetSettings)
 		const {
-			budget_type,
-			isBudget,
+			budget_type = 1,
+			isBudget = 1,
 			total_budget
 		} = budgetSettings
+		const totalBudget = total_budget === undefined ? '0' : String(total_budget)
 		this.setState({
 			budget_type,
 			isBudget,
-			total_budget: String(total_budget)
+			total_budget: totalBudget
 		})
 	}
-	getTypeText = type => {
+	getTypeText = (type = 1) => {
 		return budgetTypeObj.find(item => item.key === type).label
 	}
 	getIconInfo = (flag = true) => {
@@ -75,17 +76,23 @@ export default class BudgetSetting extends React.Component {
 			isBudget: !this.state.isBudget
 		})
 	}
-	setBudget = () => {
+	setBudget = async () => {
 		const { budget_type, isBudget, total_budget } = this.state
 		const { budgetSettings } = this.props.budgetStore
+		let flag = false
+		if(budgetSettings){
+			flag = budget_type === budgetSettings.budget_type && isBudget === budgetSettings.isBudget && Number(total_budget) === budgetSettings.total_budget
+		}
 		// const flag = !Object.keys(this.state).map(item => budgetSettings[item] === this.state[item]).every(item => item)
-		const flag = budget_type === budgetSettings.budget_type && isBudget === budgetSettings.isBudget && Number(total_budget) === budgetSettings.total_budget
-		!flag && this.props.budgetStore.setBudget({
-			budget_type,
-			isBudget,
-			total_budget: Number(total_budget)
-		})
+		if(!flag) {
+			await this.props.budgetStore.setBudget({
+				budget_type,
+				isBudget,
+				total_budget: Number(total_budget)
+			})
+		}
 		this.props.navigation.navigate('Budget')
+		this.props.budgetStore.refreshBudgets()
 		this.props.budgetStore.setHandleConfirm(false)
 	}
 	render() {
@@ -104,7 +111,7 @@ export default class BudgetSetting extends React.Component {
 				</View>
 				<View style={[styles.item]}>
 					<Text style={[styles.itemText]}>预算类型</Text>
-					<TouchableHighlight underlayColor="##ffffff" onPress={() => this.editType()}>
+					<TouchableHighlight underlayColor="#fff" onPress={() => this.editType()}>
 						<View style={styles.itemRight}>
 							<Text>{this.getTypeText(budget_type)}</Text>
 							<RightArrow style={{ marginLeft: 8 }} />

@@ -1,7 +1,7 @@
 import React from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
-const RightArrow = ({color = '#d3d7d4', name = 'ios-arrow-forward', size = 20, style}) => {
+const RightArrow = ({color = '#d3d7d4', name = 'ios-arrow-forward', size = 20, style, onPress}) => {
 	return (<Ionicons
 		color={color}
 		name={name}

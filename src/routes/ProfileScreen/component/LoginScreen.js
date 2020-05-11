@@ -2,8 +2,11 @@ import React from 'react'
 import { View, Text, Button, TextInput } from 'react-native'
 import styles from '../css/LoginScreenCss'
 import { observer, inject } from 'mobx-react'
+import storage from '../../../utils/storage'
+import homeStore from '../../../../store/HomeStore'
+import budgetStore from '../../../../store/BudgetStore'
 
-@inject('profileStore')
+@inject('profileStore', 'homeStore', 'budgetStore')
 @observer
 class LoginScreen extends React.Component {
 	constructor(props) {
@@ -16,8 +19,10 @@ class LoginScreen extends React.Component {
 	}
 	handleLogin = async () => {
 		const { username, password } = this.state
-		const { profileStore, navigation } = this.props
+		const { profileStore, navigation, route } = this.props
+		const { initUserinfo, initHomeRecords } = route.params
 		const res = await profileStore.login({username, password})
+		console.log('res', res)
 		if (res.code === -1) {
 			this.setState({
 				username: undefined,
@@ -26,9 +31,24 @@ class LoginScreen extends React.Component {
 			})
 		} else {
 			// 成功状态
+			storage.save({
+				key: 'userinfo',
+				data: {
+					_id: res._id,
+					username,
+					avatar: { uri: 'data:image/jpeg;base64,' + res.avatar },
+					sign_days: res.sign_days
+				},
+				expires: 1000 * 3600 * 24 * 30
+			})
+			initUserinfo()
+			// initHomeRecords && initHomeRecords()
+			await homeStore.getStatus()
+			homeStore.getRecords()
+			budgetStore.getBudgetSetting()
 			navigation.navigate('Profile', {
 				_id: res._id,
-				username
+				username,
 			})
 		}
 
@@ -36,7 +56,7 @@ class LoginScreen extends React.Component {
 	handleInput = (type, value) => {
 		const { warnText } = this.state
 		this.setState({
-			type: value
+			[type]: value
 		})
 		if (warnText) {
 			this.setState({
@@ -44,8 +64,11 @@ class LoginScreen extends React.Component {
 			})
 		}
 	}
+	handleBack = () => {
 
-  render() {
+	}
+
+render() {
 		const { username, password, warnText } = this.state
 		return (
 			<View style={styles.container}>

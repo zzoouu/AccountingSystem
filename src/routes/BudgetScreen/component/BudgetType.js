@@ -23,7 +23,7 @@ class BudgetType extends React.Component {
 				renderItem={({ item }) => {
 					return (
 						<TouchableHighlight
-							keyExtractor={(item) => Math.random()}
+							keyExtractor={(item) => Math.random().toString()}
 							onPress={() => this.setType(item.key)}>
 							<View style={styles.container}>
 								<Text style={styles.text}>{item.label}</Text>

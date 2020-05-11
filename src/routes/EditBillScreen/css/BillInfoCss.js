@@ -79,6 +79,15 @@ const styles = StyleSheet.create({
 	listIcon: {
 		marginRight: 8
 	},
+	authorWrapper: {
+		flex: 0,
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginLeft: 20
+	},
+	authorText: {
+		marginLeft: 5
+	},
 	money: {
 		flex: 1,
 		textAlign: 'right'

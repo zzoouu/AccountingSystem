@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
 	loginText: {
 	},
 	loginName: {
-		fontSize: 14
+		fontSize: 12,
 	},
 	signin: {
 		flex: 0,

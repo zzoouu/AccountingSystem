@@ -40,7 +40,10 @@ class BillController extends Controller {
 	async getBills() {
 		try {
 			const { ctx } = this
-			const res = await ctx.service.bill.getBills()
+			// const { username } = ctx.request.body
+			console.log(ctx.session.userinfo)
+			const { username } = ctx.session.userinfo
+			const res = await ctx.service.bill.getBills(username)
 			ctx.body = {
 				status: 200,
 				data: res
@@ -50,6 +53,17 @@ class BillController extends Controller {
 		} catch (e) {
 			console.log('e', e)
 		}
+	}
+	async getBillInfoById() {
+		const { ctx } = this
+		const bill_id = ctx.params.bill_id
+		const res = await ctx.service.bill.getBillInfoById(bill_id)
+		ctx.body = {
+			status: 'OK',
+			data: res
+		}
+		ctx.set('Access-Control-Allow-Origin', '*')
+		ctx.set('Access-Control-Allow-Method', '*')
 	}
 	async getBillById() {
 		const { ctx } = this
@@ -64,7 +78,8 @@ class BillController extends Controller {
 	}
 	async getBillRecords() {
 		const { ctx } = this
-		const res = await ctx.service.bill.getBillRecords()
+		const { userinfo } = ctx.session
+		const res = await ctx.service.bill.getBillRecords(userinfo)
 		ctx.body = {
 			status: 200,
 			data: res
@@ -113,8 +128,10 @@ class BillController extends Controller {
 	}
 	async deleteBill() {
 		const { ctx } = this
-		const { bill_id } = ctx.params
-		const res = await ctx.service.bill.deleteBill(bill_id)
+		// const { bill_id } = ctx.params
+		const info = ctx.request.body
+		console.log('info', info)
+		const res = await ctx.service.bill.deleteBill(info)
 		ctx.body = {
 			status: 200,
 			data: res

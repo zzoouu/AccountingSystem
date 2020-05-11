@@ -34,12 +34,23 @@ target 'AccountingSystem' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
+  pod 'react-native-cookies', :podspec => '../node_modules/react-native-cookies/ios/react-native-cookies.podspec'
 
 
 
 
 
-  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
+
+
+
+
+  # pod 'react-native-cookies', :path => '../node_modules/react-native-cookies'
+
+
+
+  # pod 'RNSVG', :path => '../node_modules/react-native-svg'
+
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
   target 'AccountingSystemTests' do
     inherit! :search_paths

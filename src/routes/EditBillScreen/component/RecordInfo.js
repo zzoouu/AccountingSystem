@@ -5,31 +5,35 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import ButtonWrapper from '../../../components/Button/Button'
 import { observer, inject } from 'mobx-react'
 import { TouchableHighlight } from 'react-native-gesture-handler'
+import homeStore from '../../../../store/HomeStore'
+import MyIconFont from '../../../components/icon/iconfont'
 
-@inject('billStore')
+@inject('billStore', 'homeStore')
 @observer
 class RecordInfo extends React.Component {
-  constructor(props) {
+    constructor(props) {
 		super(props)
 		const { recordInfo } = props.route.params
 		this.state = {
 			recordInfo
 		}
 	}
-	deleteRecordById = record_id => {
+	deleteRecordById = async record_id => {
+		console.log(this.props.route)
 		const { bill_id, refresh } = this.props.route.params
-		this.props.billStore.deleteRecordById(bill_id, record_id)
-		refresh()
+		await this.props.billStore.deleteRecordById(bill_id, record_id)
+		homeStore.getRecords()
+		refresh && refresh()
 		this.props.navigation.goBack()
 	}
 	render() {
-		console.log(this.state.recordInfo)
+		console.log(this.props.route)
 		const { recordInfo } = this.state
 		return (
 			<View style={styles.container}>
 				<View style={[styles.recordItem, {paddingTop: 12}]}>
 					<Text>图标: </Text>
-					<MaterialIcons name={recordInfo.icon} size={24} color="green" />
+					<MyIconFont name={recordInfo.icon} size={24} color="green" />
 				</View>
 				<View style={styles.recordItem}>
 					<Text>类型: {recordInfo.record_name}</Text>

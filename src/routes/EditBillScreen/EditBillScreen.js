@@ -3,16 +3,21 @@ import { View, Text, Modal, TouchableHighlight, FlatList } from 'react-native'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { observer, inject } from 'mobx-react'
+import { toJS } from 'mobx'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import DateTimePicker from '@react-native-community/datetimepicker'
-import { numKeyboard } from '../../utils/const'
+import { numKeyboard, payIcons } from '../../utils/const'
+import MyIconFont from '../../components/icon/iconfont'
+
 
 
 import styles from './css/EditBillScreenCss'
 import { TextInput } from 'react-native-gesture-handler'
+import storage from '../../utils/storage'
+import homeStore from '../../../store/HomeStore'
 const Tab = createMaterialTopTabNavigator()
 
-@inject(["billStore"])
+@inject('billStore', 'homeStore', 'budgetStore')
 @observer
 class IncomeScreen extends React.Component {
 	constructor(props) {
@@ -28,32 +33,49 @@ class IncomeScreen extends React.Component {
 			billId: undefined,
 			billName: undefined,
 			selectedIcon: undefined,
-			flag: undefined
+			flag: undefined,
+			userinfo: {}
 		}
 	}
-	componentDidMount() {
+	async componentDidMount() {
 		this.setState({
 			flag: this.props.route.name
 		})
+		this.getUserinfo()
+		await this.props.billStore.getDefaultIcons()
 	}
-	editBillRecord = () => {
-		const { numValue, note, billId, selectedIcon, flag } = this.state
+	getUserinfo = async () => {
+		try {
+			const res = await storage.load({
+				key: 'userinfo'
+			})
+			this.setState({
+				userinfo: res
+			})
+		} catch (e) {
+		}
+	}
+	editBillRecord = async () => {
+		const { numValue, note, billId, selectedIcon, flag, userinfo } = this.state
 		if (billId && numValue) {
-			this.props.billStore.editBillRecord({
+			await this.props.billStore.editBillRecord({
 				bill_id: billId,
 				record_name: selectedIcon.label,
 				money: Number(numValue),
 				desc: note,
 				record_type: flag === 'Income' ? 1 : 0,
-				icon: selectedIcon.icon
+				icon: selectedIcon.icon,
+				author: userinfo.username
 			})
+			homeStore.getRecords()
+			await this.props.budgetStore.refreshBudgets()
 		} else {
 			console.log('reject')
 		}
 	}
 
 	handelNum = item => {
-		let { numValue, nums } = this.state
+		let { numValue, nums, userinfo } = this.state
 		switch (item) {
 			case '=':
 				let value = eval(nums.join(''))
@@ -70,7 +92,11 @@ class IncomeScreen extends React.Component {
 				this.setState({
 					modalVisible: false
 				})
-				this.editBillRecord()
+				if (userinfo) {
+					this.editBillRecord()
+				} else {
+					// 先登录
+				}
 			default:
 				nums.push(item)
 				this.setState({
@@ -116,9 +142,14 @@ class IncomeScreen extends React.Component {
 			choseText: bill_name
 		})
 	}
+	// _keyExtractor= (item,index) => index.toSring()
 	render() {
 		const { billStore } = this.props
-		const { consumptionTags = [] } = billStore
+		const { consumptionTags = [], defaultIcons = [], payiconArr = [], iniconArr = [] } = billStore
+		const flag = this.props.route.name
+		const iconList = flag === 'Income' ? iniconArr : payiconArr
+		// console.log(toJS(this.props.billStore.defaultIcons), 111)
+
 		return (
 			<View style={styles.container}>
 				<View style={styles.tabItem}>
@@ -133,7 +164,6 @@ class IncomeScreen extends React.Component {
 					</TouchableHighlight>
 					<TouchableHighlight
 						underlayColor="#ffffff"
-						style={styles.choseBill}
 						onPress={() => this.handelSelectBill()}>
 						<View style={styles.choseBill}>
 							<Text style={[styles.font12]}>{this.state.choseText}</Text>
@@ -142,27 +172,25 @@ class IncomeScreen extends React.Component {
 					</TouchableHighlight>
 				</View>
 				<View style={styles.iconTags}>
-					<FlatList
-						data={consumptionTags}
-						contentContainerStyle={styles.flatList}
-						horizontal={false}
-						renderItem={({ item, index }) => {
+					{
+						toJS(iconList).map(item => {
 							return (
 								<View
-									keyExtractor={(item, index) => Math.random()}
+									// keyExtractor={(item, index) => flag + toJS(item).icon.toString()}
+									key={flag + toJS(item).icon.toString()}
 									style={styles.iconItem}>
 									<TouchableHighlight
 										style={styles.iconBack}
 										underlayColor='#ffa500'
 										onPress={() => this.handelIconItem(item)}>
-										<MaterialIcons name={item.icon} size={30} color="#EE7942" />
+										<MyIconFont name={item.icon} size={30} color="#EE7942" />
 									</TouchableHighlight>
 									<Text style={styles.iconText}>{item.label}</Text>
 								</View>
 							)
-						}}
-					/>
-				</View>
+						})
+					}
+				</View >
 				<Modal
 					animationType="slide"
 					transparent={true}
@@ -174,14 +202,12 @@ class IncomeScreen extends React.Component {
 								<TextInput
 									placeholder="10个字以内"
 									style={{ marginLeft: 4 }}
-									onEndEditing={(e) => console.log(e.nativeEvent.text)}
-								// onChangeText={text => this.handelNote(text)}
+									// onEndEditing={(e) => console.log(e.nativeEvent.text)}
+									onChangeText={text => this.handelNote(text)}
 								/>
 							</View>
 							<TextInput style={styles.headValue} defaultValue="0" value={this.state.numValue} editable={false} />
 						</View>
-						{/* <View style={styles.modalBody}>
-						</View> */}
 						<FlatList
 							data={numKeyboard}
 							horizontal={false}
@@ -191,7 +217,7 @@ class IncomeScreen extends React.Component {
 									<TouchableHighlight
 										onPress={() => this.handelNum(item.label)}
 										underlayColor='#f2f2f2'
-										keyExtractor={(item, index) => Math.random()}
+										keyExtractor={(item, index) => Math.random().toString()}
 										style={[styles.num, ((index + 1) % 4 === 0) && { borderRightWidth: 0 }]}>
 										<Text>{item.label}</Text>
 									</TouchableHighlight>
@@ -209,7 +235,7 @@ class IncomeScreen extends React.Component {
 							<TouchableHighlight onPress={() => this.handleSelectDate(true)}>
 								<Text>确定</Text>
 							</TouchableHighlight>
-							<TouchableHighlight onPress={() => this.handleSelectDate(false)}>
+							<TouchableHighlight onPress={() => this.handleSelectDate(true)}>
 								<Text>取消</Text>
 							</TouchableHighlight>
 						</View>
@@ -226,52 +252,57 @@ class IncomeScreen extends React.Component {
 						/>
 					</View>
 				</Modal>
-			</View>
+			</View >
 		)
 	}
 }
 
-// class EditBillScreen extends React.Component {
-function EditBillScreen() {
-	// render() {
-	return (
-		<Tab.Navigator
-			initialRouteName="Income"
-			tabBarOptions={{
-				tabStyle: {
-					height: 50
-				},
-				labelStyle: {
-					fontSize: 14
-				}
-			}}
-		>
-			<Tab.Screen
-				name="Income"
-				component={IncomeScreen}
-				options={{
-					tabBarLabel: '收入'
-				}}
-				listeners={{
-					tabPress: e => {
-						console.log(1)
+@inject('billStore')
+@observer
+class EditBillScreen extends React.Component {
+	// function EditBillScreen() {
+	constructor(props) {
+		super(props)
+	}
+	render() {
+		return (
+			<Tab.Navigator
+				initialRouteName="Income"
+				tabBarOptions={{
+					tabStyle: {
+						height: 50
+					},
+					labelStyle: {
+						fontSize: 14
 					}
 				}}
-			/>
-			<Tab.Screen
-				name="pay"
-				component={IncomeScreen}
-				options={{
-					tabBarLabel: '支出'
-				}}
-				listeners={{
-					tabPress: e => {
-						console.log(2)
-					}
-				}}
-			/>
-		</Tab.Navigator>
-	)
-	// }
+			>
+				<Tab.Screen
+					name="Income"
+					component={IncomeScreen}
+					options={{
+						tabBarLabel: '收入'
+					}}
+					listeners={{
+						tabPress: e => {
+							this.props.billStore.getDefaultIcons()
+						}
+					}}
+				/>
+				<Tab.Screen
+					name="Pay"
+					component={IncomeScreen}
+					options={{
+						tabBarLabel: '支出'
+					}}
+					listeners={{
+						tabPress: e => {
+							this.props.billStore.getDefaultIcons()
+						}
+					}}
+				/>
+			</Tab.Navigator>
+		)
+	}
 }
 export default EditBillScreen

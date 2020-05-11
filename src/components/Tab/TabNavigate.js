@@ -28,7 +28,7 @@ class RootsBar extends React.Component {
 								case 'EditBill':
 									iconName = focused ? 'ios-add-circle' : 'ios-add-circle-outline'
 									break
-								default:
+								case 'Profile':
 									iconName = 'ios-settings'
 							}
 							return <Ionicons name={iconName} size={size} color={color} />

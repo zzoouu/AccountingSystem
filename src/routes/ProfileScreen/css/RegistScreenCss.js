@@ -19,7 +19,24 @@ const styles = StyleSheet.create({
 		paddingLeft: 18
 	},
 	left8: {
-		marginLeft: 8
+		marginLeft: 8,
+	},
+	iconItem: {
+		flex: 0,
+		flexDirection: 'row',
+		marginLeft: 12
+	},
+	iconText: {
+		color: 'green',
+	},
+	icon: {
+		width: 30,
+		height: 30,
+		borderBottomLeftRadius: 20,
+		borderBottomRightRadius: 20,
+		borderTopLeftRadius: 20,
+		borderTopRightRadius: 20,
+		marginLeft: 12
 	},
 	captcha: {
 		width: width * 0.6,

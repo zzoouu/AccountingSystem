@@ -4,7 +4,7 @@ const DWIDTH = Util.size.width
 const DHEIGHT = Util.size.height
 const IHEIGHT = 40
 const STACKHEADER = 60
-const MHEIGHT = DHEIGHT - (IHEIGHT + 10) * 2 - IHEIGHT - STACKHEADER - 20
+const MHEIGHT = DHEIGHT - (IHEIGHT + 10) * 3 - IHEIGHT - STACKHEADER - 20
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -29,8 +29,17 @@ const styles = StyleSheet.create({
 		alignSelf: 'center',
 		marginTop: MHEIGHT
 	},
-	cache: {
+	itemText: {
 		flex: 15
+	},
+	avatar: {
+		height: 24,
+		width: 24,
+		borderTopRightRadius: 12,
+		borderTopLeftRadius: 12,
+		borderBottomRightRadius: 12,
+		borderBottomLeftRadius: 12,
+		marginRight: 10
 	},
 	rightArrow: {
 		flex: 1

@@ -250,8 +250,42 @@ data: {
 
 #### 更改各项预算信息
 
+扫描二维码添加成功后，点击账本无法查看细节，需要传 choseType 参数
+
+需要添加账本主授权人
 
 
+
+签到处理
+推荐给朋友
+
+设置中添加改变用户名，  改变密码(可能需要短信验证)   时间提醒 权衡是否存在
+
+首页头部总记没有区分状态
+
+
+收入
+工资、红包、理财、外快、生活费、报销、绩效奖金、投资
+公积金、退款、奖学金、退税
+
+消费
+
+化妆品、护肤品、租房、红包、交通、水、电、快递、社交、通讯、餐饮、学习、衣物鞋包、数码、医疗、娱乐、维修、日用品、
+长辈、孩子、旅行、宠物、礼金、烟酒、还贷、健身、
+
+
+### react-native-vector-icons multiple commands produce:
+- react-native link react-native-vector-icons->info.plist自动填充，;build phases中 copy pods resources 中删除对 ttf 的引入;copy bundle resources 自动引入
+- 自定义，iconfont.svg 和 iconfont_mapper.sh 同级，执行./iconfont_mapper.sh iconfont.svg生成 iconfont.json，若报错，先执行chmod 777 iconfont_mapper.sh
+- iconfont.json 加入到 component/icon
+- 同级添加 iconfont.js
+- 引入使用，相对目录 component/icon/iconfont.js
+
+
+- 记账后首页头部不能实时更新数据
+- 记账后，报表未更新数据 ??
+- 管理图标
+- 预算设置为月预算后，消费没有不是月消费 ?? 缺乏数据，貌似可行
 
 
 

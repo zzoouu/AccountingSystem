@@ -1,163 +1,79 @@
 import { observable, action, computed } from 'mobx'
 import { get, post } from '../src/utils/fetch'
 import Router from '../router'
+import storage, { getUserinfo } from '../src/utils/storage'
 
-const getItemList = () => {
-	return [
-		{
-			title: new Date(),
-			data: [
-				{
-					type: 'income',
-					money: 2000,
-					label: '购物'
-				},
-				{
-					type: 'pay',
-					money: 2000,
-					label: '衣服'
-				},
-				{
-					type: 'income',
-					money: 400,
-					label: '生活用品'
-				}
-			]
-		},
-		{
-			title: new Date(1999, 6, 3),
-			data: [
-				{
-					type: 'income',
-					money: 200,
-					label: '购物'
-				},
-				{
-					type: 'pay',
-					money: 700,
-					label: '衣服'
-				},
-				{
-					type: 'income',
-					money: 400,
-					label: '生活用品'
-				}
-			]
-		},
-		{
-			title: new Date(),
-			data: [
-				{
-					type: 'income',
-					money: 2000,
-					label: '购物'
-				},
-				{
-					type: 'pay',
-					money: 2000,
-					label: '衣服'
-				},
-				{
-					type: 'income',
-					money: 400,
-					label: '生活用品'
-				}
-			]
-		},
-		{
-			title: new Date(1998, 9, 4),
-			data: [
-				{
-					type: 'income',
-					money: 2000,
-					label: '购物'
-				},
-				{
-					type: 'pay',
-					money: 2000,
-					label: '衣服'
-				},
-				{
-					type: 'income',
-					money: 400,
-					label: '生活用品'
-				}
-			]
-		},
-		{
-			title: new Date(2024, 5, 8),
-			data: [
-				{
-					type: 'income',
-					money: 2000,
-					label: '购物'
-				},
-				{
-					type: 'pay',
-					money: 2000,
-					label: '衣服'
-				},
-				{
-					type: 'income',
-					money: 400,
-					label: '生活用品'
-				}
-			]
-		}
-	]
-}
 const url =  'http://localhost:7001/bill'
 class HomeStore {
-	@observable list
 	@observable records = []
-	@computed get itemList() {
-		return this.list.map(v => {
-			return {
-				title: v.title,
-				data: v.data.slice()
-			}
-		}).slice()
-	}
+	@observable originRecords = []
+	@observable userStatus = 0
+	@observable statusText = undefined
 	constructor() {
-		this.list = getItemList()
-	}
-	@action
-	getUserinfoById = (userid) => {
-		// fetch
-		// this.list = res
+		this.records = this.getRecords()
+
 	}
 
-	@action
-	getTestBill = async (callBackSuccess, callBackError) => {
-		const res = await get(url, callBackSuccess, callBackError)
-		return res
-	}
-	@action
-	editBillInfo = async (callBackSuccess, callBackError) => {
-		try {
-			let params = {
-				price: 128,
-				label: '测试post'
-			}
-			let url = 'http://localhost:7001/bill/editBill'
-			const res = await post(url, params)
-			return res
-		}catch(e) {
-			console.log('e', e)
-			return e
-		}
-	}
 	@action
 	getRecords = async () => {
 		try {
 			const res = await get({
 				url: `${Router.billUrl.bill}`
 			})
-			this.records = res.data.data
+			// this.records = res.data.data
+			const data = res.data.data
+			this.originRecords = data
+			this.records = formatBillRecords(data)
+			
 		} catch(e) {
+			console.log('eee', e)
+		}
+	}
+	@action
+	getStatus = async () => {
+		try {
+			const res = await storage.load({key: 'userinfo'})
+			this.userStatus = res ? 1 : 0
+		} catch (e) {
+			switch (e.name) {
+				case 'NotFoundError':
+					this.userStatus = 0
+					this.statusText = '您还未登录，请点击前往登录~'
+					break
+				case 'ExpiredError':
+					this.userStatus = 2
+					this.statusText = '您的登录信息已经过期，请点击重新登录~'
+					break
+			}
+			console.log('e', e)
 		}
 	}
 }
 const homeStore = new HomeStore()
 export default homeStore
+
+export const formatBillRecords = (records) => {
+		let obj = {}
+		let arr = []
+		let data = []
+		if (records.length) {
+			// let flag = records[0].record_date.substr(0, 10)
+			let flag = records[0].record_date.substr(0, 7)
+			records.map((record, index) => {
+				const date = record.record_date
+				// let time = date.substr(0, 10) // 按日划分
+				let time = date.substr(0, 7)
+				data.push(record)
+				if ((flag !== time) || (index === records.length - 1)) {
+					obj.title = flag
+					obj.data = data
+					flag = time
+					arr.push(obj)
+					data = []
+					obj = {}
+				}
+			})
+		}
+		return arr
+}
 

@@ -6,6 +6,8 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { editRecordsList } from '../../../utils/const'
+import { getUserinfo } from '../../../utils/storage'
+import MyIconFont from '../../../components/icon/iconfont'
 
 @inject(["billStore"])
 @observer
@@ -19,8 +21,8 @@ class BillInfo extends React.Component {
 			selectedTime: undefined,
 		}
 	}
-	componentDidMount() {
-		this.getBillInfo()
+	async componentDidMount() {
+		await this.getBillInfo()
 		this.getRecords()
 	}
 	async getRecords() {
@@ -36,11 +38,18 @@ class BillInfo extends React.Component {
 		this.formatBillRecords()
 	}
 	getBillInfo = async () => {
-		await this.props.billStore.getBills()
-		const { bills } = this.props.billStore
-		const { bill_id } = this.props.route.params
-		let res = bills.find(item => item.bill_id === bill_id)
-		this.setState({billInfo: res})
+		// await this.props.billStore.getBills()
+		// const { bills } = this.props.billStore
+		// const { bill_id } = this.props.route.params
+		// let res = await bills.find(item => item.bill_id === bill_id)
+		// this.setState({ billInfo: res })
+		const { billStore, route: {
+			params
+		} } = this.props
+		await billStore.getBillInfoById(params.bill_id)
+		this.setState({
+			billInfo: billStore.billInfo
+		})
 		// return res
 	}
 	formatBillRecords = () => {
@@ -83,15 +92,12 @@ class BillInfo extends React.Component {
 			selectedTime: date
 		})
 	}
-	refreshRecords = () => {
-		this.getRecords()
-	}
 	editRecord = data => {
 		const { bill_id } = this.props.route.params
 		this.props.navigation.navigate('RecordInfo', {
 			recordInfo: data,
 			bill_id,
-			refresh: this.refreshRecords.bind(this)
+			refresh: this.getRecords.bind(this)
 		})
 	}
 	handleEmpty = () => {
@@ -126,16 +132,28 @@ class BillInfo extends React.Component {
 			owe,
 		}
 	}
-	handleEditBill = item => {
+	handleEditBill = async item => {
 		const { billInfo } = this.state
-		const { setBillInfoSetting } = this.props.billStore
+		const {
+			billStore: {
+				setBillInfoSetting,
+				deleteBillById
+			},
+			navigation
+		} = this.props
+		const userinfo = await getUserinfo()
 		switch (item.label) {
 			case '分享账本':
-				console.log('fenxiang')
+				const { bill_id, members, isShared } = billInfo
+				navigation.navigate('Share', {
+					bill_id,
+					members,
+					isShared
+				})
 				setBillInfoSetting(false)
 				break
 			case '编辑账本':
-				this.props.navigation.navigate('AddBill', {
+				navigation.navigate('AddBill', {
 					billInfo,
 					type: 'PUT',
 					refresh: this.getBillInfo.bind(this)
@@ -143,15 +161,19 @@ class BillInfo extends React.Component {
 				setBillInfoSetting(false)
 				break
 			case '账本成员':
-				this.props.navigation.navigate('BillMembers', {
+				navigation.navigate('BillMembers', {
 					billInfo
 				})
 				setBillInfoSetting(false)
 				break
 			case '删除账本':
-				this.props.billStore.deleteBillById(billInfo.bill_id)
+				deleteBillById({
+					bill_id: billInfo.bill_id,
+					author: userinfo.username,
+					members: billInfo.members
+				})
 				setBillInfoSetting(false)
-				this.props.navigation.goBack()
+				navigation.navigate('BillInfo')
 				break
 			default:
 				setBillInfoSetting(false)
@@ -206,8 +228,12 @@ class BillInfo extends React.Component {
 														<TouchableHighlight onPress={() => this.editRecord(record)}>
 															<View style={styles.list}>
 																{/* icon 类别记得统一处理 */}
-																<MaterialIcons style={styles.listIcon} name={record.icon} size={20} color="#AD5A5A" />
+																<MyIconFont style={styles.listIcon} name={record.icon} size={20} color="#AD5A5A" />
 																<Text style={styles.itemText}>{record.record_name}</Text>
+																<View style={styles.authorWrapper}>
+																	<MaterialIcons name="border-color" size={10} color="#838B8B"/>
+																	<Text style={styles.authorText}>{record.author}</Text>
+																</View>
 																<Text style={styles.money}>{`${this.getMoneyPrefix(record.record_type)} ${record.money}`}</Text>
 															</View>
 														</TouchableHighlight>
