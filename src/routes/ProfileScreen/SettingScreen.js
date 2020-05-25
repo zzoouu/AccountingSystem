@@ -1,15 +1,16 @@
 import React from 'react'
-import { Text, View, Button, TouchableHighlight, Modal, Image } from 'react-native'
+import { Text, View, Button, TouchableHighlight, Modal, Image, TextInput } from 'react-native'
 import styles from './css/SettingScreenCss'
 import { common } from '../../utils/commonCss'
 import RightArrow from '../../components/RightArrow'
 // import storage from '../../utils/storage'
 import { observer, inject } from 'mobx-react'
-import { getUserinfo } from '../../utils/storage'
+import storage, { getUserinfo } from '../../utils/storage'
 import ImagePicker from 'react-native-image-picker'
+import billStore from '../../../store/BillStore'
 
 
-@inject('profileStore', 'homeStore', 'budgetStore')
+@inject('profileStore', 'homeStore', 'budgetStore', 'billStore')
 @observer
 export default class SettingScreen extends React.Component {
 	constructor(props) {
@@ -17,7 +18,8 @@ export default class SettingScreen extends React.Component {
 		this.state = {
 			showModal: false,
 			avatar: undefined,
-			userinfo: undefined
+			userinfo: undefined,
+			username: undefined
 		}
 	}
 	async componentDidMount() {
@@ -25,6 +27,7 @@ export default class SettingScreen extends React.Component {
 		if (userinfo) {
 			this.setState({
 				userinfo,
+				username: userinfo ? userinfo.username : undefined,
 				avatar: userinfo.avatar
 			})
 		}
@@ -49,6 +52,7 @@ export default class SettingScreen extends React.Component {
 		homeStore.getStatus()
 		homeStore.getRecords()
 		budgetStore.getBudgetSetting()
+		billStore.getBills()
 		navigation.goBack()
 	}
 	handelTime = e => {
@@ -141,6 +145,41 @@ export default class SettingScreen extends React.Component {
 			}
 		}))
 	}
+	changeUsername = (username) => {
+		this.setState({ username })
+	}
+	handleConfirm = async () => {
+		const { params } = this.props.route
+		const { username, userinfo } = this.state
+		const res = await this.props.profileStore.updateUserinfo({
+			_id: userinfo._id,
+			username
+		})
+		console.log(res)
+		// if (res.data.code !== -1) {
+
+		// } else {
+		// 	// 修改失败
+		// 	// 内容已经存在
+		// 	this.setState({
+		// 		username: '用户名已存在，请更换'
+		// 	})
+		// }
+		storage.save({
+			key: 'userinfo',
+			data: {
+				_id: userinfo._id,
+				username,
+				avatar: userinfo.avatar
+			}
+		})
+		const { homeStore, budgetStore } = this.props
+		params.initProfile()
+		homeStore.getRecords()
+		budgetStore.getBudgetSetting()
+		budgetStore.getBudgetItem()
+		this.props.navigation.goBack()
+	}
 	//打开相机
 	launchCamera = () => {
 		//配置选项
@@ -155,7 +194,7 @@ export default class SettingScreen extends React.Component {
 		}))
 	}
 	render() {
-		const { userinfo, avatar } = this.state 
+		const { userinfo, avatar, username } = this.state
 		return (
 			<View style={styles.container}>
 				<TouchableHighlight
@@ -176,14 +215,29 @@ export default class SettingScreen extends React.Component {
 				<TouchableHighlight onPress={e => this.showImagePicker(e)}>
 					<View style={styles.item}>
 						<Text style={styles.itemText}>设置头像</Text>
-						<Image source={avatar} style={styles.avatar}/>
+						<Image source={avatar} style={styles.avatar} />
 						<RightArrow style={styles.rightArrow} />
+					</View>
+				</TouchableHighlight>
+				<TouchableHighlight onPress={e => this.showImagePicker(e)}>
+					<View style={styles.item}>
+						<Text style={styles.itemText}>设置昵称</Text>
+						<TextInput
+							style={[{ marginRight: 10 }]}
+							value={username}
+							onChangeText={(text) => this.changeUsername(text)} />
 					</View>
 				</TouchableHighlight>
 				<View style={[styles.item, styles.button, common.borderRadius]}>
 					<Button
 						onPress={this.handelExit}
 						title='退出登录'
+						color='#000000' />
+				</View>
+				<View style={[styles.item, styles.button, common.borderRadius, { marginTop: 10 }]}>
+					<Button
+						onPress={this.handleConfirm}
+						title='确定'
 						color='#000000' />
 				</View>
 				<Modal

@@ -19,7 +19,6 @@ class RecordInfo extends React.Component {
 		}
 	}
 	deleteRecordById = async record_id => {
-		console.log(this.props.route)
 		const { bill_id, refresh } = this.props.route.params
 		await this.props.billStore.deleteRecordById(bill_id, record_id)
 		homeStore.getRecords()
@@ -27,7 +26,7 @@ class RecordInfo extends React.Component {
 		this.props.navigation.goBack()
 	}
 	render() {
-		console.log(this.props.route)
+		// console.log(this.props.route)
 		const { recordInfo } = this.state
 		return (
 			<View style={styles.container}>
@@ -51,7 +50,7 @@ class RecordInfo extends React.Component {
 					<Text>记录人员: {recordInfo.author}</Text>
 				</View>
 				<View style={styles.recordItem}>
-					<Text>记录时间: {recordInfo.record_date}</Text>
+					<Text>记录时间: {recordInfo.record_date.substr(0, 10)}</Text>
 				</View>
 					<TouchableHighlight
 					style={styles.button}

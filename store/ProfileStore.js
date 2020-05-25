@@ -58,6 +58,7 @@ class ProfileStore {
 				url: Router.profileUrl.signin,
 				body: params
 			})
+			console.log("res", res)
 			if (res.data.code === 1) {
 				
 			}

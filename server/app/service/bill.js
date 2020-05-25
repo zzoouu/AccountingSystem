@@ -42,7 +42,7 @@ class BillService extends Service {
 		}
 	}
 	async getBills(username) {
-		console.log(username, 'username')
+		// console.log(username, 'username')
 		// 模糊查询
 		const sql = `select * from bills where members like "%${username}%"`
 		const bills = await this.app.mysql.query(sql)
@@ -111,15 +111,32 @@ class BillService extends Service {
 		// console.log('records', userinfo)
 		let data
 		if (userinfo) {
-			const records = await this.app.mysql.select('bill', {
+			// const sql = `select * from bill where author like "%${userinfo.username}%"`
+			const bills = await this.getBills(userinfo.username)
+			const ids = bills.bills.map(item => item.bill_id)
+			const records2 = await this.app.mysql.select('bill', {
 				where: {
-					author: userinfo.username
+					bill_id: ids
 				},
 				orders: [[ 'record_date', 'desc' ]]
 			})
-			// const records = await this.app.mysql.query(sql)
-			// console.log('records', records)
-			data = records
+			records2.map(item => {
+				const { bill_id } = item
+				const members = bills.bills.find(item => item.bill_id === bill_id).members
+				const num = members.split(',').length
+				item.number = num
+			})
+			// console.log(bills, ids)
+			// records2.map(item => item.numbers = )
+			// const records = await this.app.mysql.select('bill', {
+			// 	where: {
+			// 		author: userinfo.username
+			// 	},
+			// 	orders: [[ 'record_date', 'desc' ]]
+			// })
+			// const records2 = await this.app.mysql.query(sql)
+			// console.log('records', bills, ids, records2)
+			data = records2
 		} else {
 			data = []
 		}

@@ -467,3 +467,12 @@ export const payIcons = [
 		key: 0
 	},
 ]
+export const monthData = ['-',1, 2, 3, 4, 5, 6, 7, 8, 9 ,10, 11, 12]
+export const yearData = (start=1998, end=2021) => {
+	let len = end - start + 1
+	let arr = new Array(len).fill(start)
+	arr = arr.map((item, index) => {
+		return item = start + index
+	})
+	return arr
+}

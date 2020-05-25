@@ -7,6 +7,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { editRecordsList } from '../../../utils/const'
 import { getUserinfo } from '../../../utils/storage'
+import { toJS } from 'mobx'
 import MyIconFont from '../../../components/icon/iconfont'
 
 @inject(["billStore"])
@@ -18,12 +19,18 @@ class BillInfo extends React.Component {
 			billInfo: {},
 			billRecords: [],
 			isDatePicerVisible: false,
-			selectedTime: undefined,
+			selectedTime: new Date(),
+			userinfo: undefined,
+			warnText: '亲，暂时没有数据呢，请前往记录~~'
 		}
 	}
 	async componentDidMount() {
 		await this.getBillInfo()
 		this.getRecords()
+		const userinfo = await getUserinfo()
+		this.setState({
+			userinfo
+		})
 	}
 	async getRecords() {
 		const {
@@ -35,7 +42,7 @@ class BillInfo extends React.Component {
 			billStore
 		} = this.props
 		await billStore.getBillById(bill_id)
-		this.formatBillRecords()
+		this.formatBillRecords(billStore.billRecords)
 	}
 	getBillInfo = async () => {
 		// await this.props.billStore.getBills()
@@ -52,11 +59,18 @@ class BillInfo extends React.Component {
 		})
 		// return res
 	}
-	formatBillRecords = () => {
-		const { billRecords } = this.props.billStore
+	formatTime = date => {
+		const year = date.getFullYear()
+		const month = date.getMonth() + 1
+		const day = date.getDate()
+		return `${year}-${month.toString().padStart(2, 0)}-${day}`
+	}
+	formatBillRecords = (billRecords) => {
+		// const { billRecords } = this.props.billStore
 		let obj = {}
 		let arr = []
 		let data = []
+		billRecords = toJS(billRecords)
 		if (billRecords.length) {
 			let flag = billRecords[0].record_date.substr(0, 10)
 			billRecords.map((record, index) => {
@@ -66,7 +80,7 @@ class BillInfo extends React.Component {
 				data.push(record)
 				if ((flag !== time) || (index === billRecords.length - 1)) {
 					obj.title = flag
-					obj.data = data
+					obj.data = data.slice(0, data.length - 1)
 					flag = time
 					arr.push(obj)
 					data = []
@@ -82,10 +96,37 @@ class BillInfo extends React.Component {
 		// 1 收入   0 支出
 		return record_type === 1 ? '+' : '-'
 	}
-	handelPickTime = () => {
+	handelPickTime = (flag) => {
 		this.setState({
 			isDatePicerVisible: false
 		})
+		if (flag) {
+			this.formatRecordsByTime()
+		}
+	}
+	formatRecordsByTime = () => {
+		let { billRecords } = this.props.billStore
+		billRecords = toJS(billRecords)
+		const { selectedTime } = this.state
+		const today = new Date()
+		const selectStr = this.formatTime(selectedTime)
+		const todayStr = this.formatTime(today)
+		let ret = []
+		let warnText
+		if (selectStr === todayStr) {
+			// 首页展示近五天记录
+			// ret = billRecords.slice(0, 20)
+			ret = billRecords
+			warnText = '亲，暂时没有数据呢，请前往记录~~'
+		} else {
+			ret = billRecords ? billRecords.filter(item => {
+				return item.record_date.substr(0, 10) === selectStr}) : []
+			}
+			warnText = '亲，当天没有记录呢~~'
+		this.setState({
+			warnText
+		})
+		this.formatBillRecords(ret)
 	}
 	handleSelect = (e, date) => {
 		this.setState({
@@ -110,7 +151,6 @@ class BillInfo extends React.Component {
 		const { billRecords } = this.state
 		let income = 0
 		let pay = 0
-		let owe = 0
 		billRecords.map(item => {
 			item.data.map(record => {
 				const { money, record_type } = record
@@ -125,11 +165,18 @@ class BillInfo extends React.Component {
 				pay
 			}
 		})
-		owe = income - pay
+		let income2 = 0
+		let pay2 = 0
+		let owe2 = 0
+		billRecords.map(item => {
+			income2 += item.total.income
+			pay2 += item.total.pay
+		})
+		owe2 = income2 - pay2
 		return {
-			income,
-			pay,
-			owe,
+			income: income2,
+			pay: pay2,
+			owe: owe2,
 		}
 	}
 	handleEditBill = async item => {
@@ -181,7 +228,7 @@ class BillInfo extends React.Component {
 	}
 	render() {
 		// const { billRecords } = this.props.billStore
-		const { billRecords, billInfo, isModalVisible } = this.state
+		const { billRecords, billInfo, isModalVisible, userinfo, warnText } = this.state
 		const sumup = this.sumup()
 		return (
 			<View style={styles.container}>
@@ -224,16 +271,23 @@ class BillInfo extends React.Component {
 											</View>
 											{
 												item.data.map(record => {
+													const info = toJS(billInfo)
+													const members = info.members.split(',')
+													const iconShow = members.length > 1
 													return (
 														<TouchableHighlight onPress={() => this.editRecord(record)}>
 															<View style={styles.list}>
-																{/* icon 类别记得统一处理 */}
 																<MyIconFont style={styles.listIcon} name={record.icon} size={20} color="#AD5A5A" />
 																<Text style={styles.itemText}>{record.record_name}</Text>
-																<View style={styles.authorWrapper}>
-																	<MaterialIcons name="border-color" size={10} color="#838B8B"/>
-																	<Text style={styles.authorText}>{record.author}</Text>
-																</View>
+																{
+																	// 若为共享账单，显示记录作者，且不显示本人，若为单人账单，则不显示记录者
+																	// console.log(toJS(billInfo))
+																	iconShow && record.author !== userinfo.username &&
+																	<View style={styles.authorWrapper}>
+																		<MaterialIcons name="border-color" size={10} color="#838B8B" />
+																		<Text style={styles.authorText}>{record.author}</Text>
+																	</View>
+																}
 																<Text style={styles.money}>{`${this.getMoneyPrefix(record.record_type)} ${record.money}`}</Text>
 															</View>
 														</TouchableHighlight>
@@ -246,7 +300,7 @@ class BillInfo extends React.Component {
 							/>
 						) : (
 								<TouchableHighlight style={styles.empty} underlayColor='#f2f2f2' onPress={() => this.handleEmpty()}>
-									<Text style={styles.emptyText}>亲，暂时没有数据呢，请前往记录~~</Text>
+									<Text style={styles.emptyText}>{warnText}</Text>
 								</TouchableHighlight>
 							)
 					}
@@ -260,18 +314,18 @@ class BillInfo extends React.Component {
 							<Button
 								title="取消"
 								color="black"
-								onPress={() => this.handelPickTime()} />
+								onPress={() => this.handelPickTime(false)} />
 						</TouchableHighlight>
 						<TouchableHighlight>
 							<Button
 								title="确定"
 								color="black"
-								onPress={() => this.handelPickTime()} />
+								onPress={() => this.handelPickTime(true)} />
 						</TouchableHighlight>
 					</View>
 					<DateTimePicker
 						// testID="dateTimePicker"
-						value={new Date()}
+						value={this.state.selectedTime}
 						mode="date"
 						display="default"
 						maximumDate={new Date(2200, 1, 1)}

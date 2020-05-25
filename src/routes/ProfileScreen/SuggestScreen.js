@@ -10,7 +10,8 @@ export default class SuggestScreen extends React.Component {
 		super(props)
 		this.state = {
 			defaultText: '请输入您的宝贵意见',
-			text: ''
+			text: '',
+			flag: false
 		}
 	}
 	handelTextChange(text) {
@@ -34,7 +35,7 @@ export default class SuggestScreen extends React.Component {
 			}
 		} } = this.props
 		console.log(userinfo)
-		if (!flag) {
+		if ((!text) || text === '请输入您的宝贵意见') {
 			this.setState({
 				flag: true,
 				text: '请输入您的宝贵意见'

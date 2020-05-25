@@ -3,6 +3,7 @@ import { View, Text, TextInput, Button, TouchableOpacity, Image } from 'react-na
 import styles from '../css/RegistScreenCss'
 import { observer, inject } from 'mobx-react'
 import ImagePicker from 'react-native-image-picker'
+import { post } from '../../../utils/fetch'
 
 @inject('profileStore')
 @observer
@@ -20,13 +21,25 @@ class RegistScreen extends React.Component {
 			usrColor: false,
 			rpswColor: false,
 			phoneColor: false,
-			avatar: undefined
+			avatar: undefined,
+			smsCode: undefined
 		}
 	}
 	getCaptcha = () => {
 		this.setState({
 			flag: false
 		})
+		let isPhone = (/^1[3456789]\d{9}$/.test(this.state.phone))
+		if (isPhone) {
+			// 获取验证码
+			// this.getBomb()
+		} else {
+			this.setState({
+				phone: '手机号码格式错误，请重新输入',
+				phoneColor: true
+			})
+		}
+
 	}
 	// 选择图片
 	showImagePicker = () => {
@@ -93,9 +106,41 @@ class RegistScreen extends React.Component {
 			console.log('response: ' + response)
 		}))
 	}
+	veriBomb = async () => {
+		const { smsCode, captcha } = this.state
+		let flag
+		const res = await post({
+			url: `https://api2.bmob.cn/1/verifySmsCode/${captcha}`,
+			headers: {
+				'X-Bmob-Application-Id': '75f0265175c3f938fcdb2518bbce14ea',
+				'X-Bmob-REST-API-Key': 'cbe9d337f8193b0adc4ee8930deb888c',
+				// 'Content-Type': 'application/json',
+			}
+		})
+		console.log(res)
+		if (res.msg === 'ok') {
+			// 验证码正确
+			// 开始注册
+			flag = true
+		} else {
+			// 验证码错误
+			this.setState({
+				captcha: ''
+			})
+			flag = false
+		}
+		return flag
+		/**
+		 * status: 200 OK
+		 * body: {"msg": "ok"}
+		 */
+	}
 	handleRegist = async () => {
 		const { profileStore, navigation } = this.props
 		const { username, password, phone, avatar } = this.state
+		// 验证短信验证码是否正确
+		// const veriBomb = await this.veriBomb()
+		// if (veriBomb) {
 		const res = await profileStore.regist({
 			username,
 			password,
@@ -110,6 +155,24 @@ class RegistScreen extends React.Component {
 				phoneColor: true
 			})
 		}
+		// }
+
+	}
+	getBomb = async () => {
+		const { phone } = this.state
+		const res = await post({
+			url: 'https://api2.bmob.cn/1/requestSmsCode',
+			body: {
+				'mobilePhoneNumber': phone,
+				// 'template': '记账1'
+			},
+			headers: {
+				'X-Bmob-Application-Id': '75f0265175c3f938fcdb2518bbce14ea',
+				'X-Bmob-REST-API-Key': 'cbe9d337f8193b0adc4ee8930deb888c',
+				// 'Content-Type': 'application/json',
+			}
+		})
+		console.log(res, 'bomb')
 	}
 	handlePassword = e => {
 		const reg = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{6,16}$/)
@@ -160,6 +223,7 @@ class RegistScreen extends React.Component {
 						style={[styles.txtinput, styles.left8, usrColor && { color: 'red' }]}
 						placeholder="请输入用户昵称"
 						value={username}
+						clearButtonMode={true}
 						onChangeText={text => this.setState({ username: text })}
 						onBlur={e => this.handleUsername(e)}
 						onFocus={e => usrColor && this.setState({ username: '', usrColor: false })}
@@ -169,8 +233,11 @@ class RegistScreen extends React.Component {
 					<Text>登录密码:</Text>
 					<TextInput
 						style={[styles.txtinput, styles.left8, pswColor && { color: 'red' }]}
+						password={true}
 						placeholder="6-16个字符，大小写字母和数字至少各一个"
 						value={password}
+						secureTextEntry={true}
+						clearButtonMode={true}
 						onChangeText={text => this.setState({ password: text })}
 						onBlur={e => this.handlePassword(e)}
 						onFocus={e => pswColor && this.setState({ password: '', pswColor: false })}
@@ -181,6 +248,8 @@ class RegistScreen extends React.Component {
 					<TextInput
 						style={[styles.txtinput, styles.left8, rpswColor && { color: 'red' }]}
 						placeholder="请重新输入密码"
+						secureTextEntry={true}
+						clearButtonMode={true}
 						value={r_password}
 						onChangeText={text => this.setState({ r_password: text })}
 						onBlur={e => this.handleRePassword(e)}
@@ -215,6 +284,7 @@ class RegistScreen extends React.Component {
 					<TextInput
 						style={[styles.txtinput, styles.left8, phoneColor && { color: 'red' }]}
 						placeholder="请输入手机号码"
+						clearButtonMode={true}
 						value={phone}
 						onChangeText={text => this.handlePhone(text)}
 						onFocus={() => phoneColor && this.setState({ phone: '', phoneColor: false })}
@@ -223,6 +293,7 @@ class RegistScreen extends React.Component {
 				<View style={styles.listItem}>
 					<TextInput
 						style={[styles.captcha]}
+						clearButtonMode={true}
 						placeholder="请输入验证码"
 						value={captcha}
 						onChangeText={text => this.setState({ captcha: text })}

@@ -5,6 +5,7 @@ import { observer, inject } from 'mobx-react'
 import storage from '../../../utils/storage'
 import homeStore from '../../../../store/HomeStore'
 import budgetStore from '../../../../store/BudgetStore'
+import { post } from '../../../utils/fetch'
 
 @inject('profileStore', 'homeStore', 'budgetStore')
 @observer
@@ -17,12 +18,14 @@ class LoginScreen extends React.Component {
 			warnText: undefined
 		}
 	}
+	componentDidMount() {
+
+	}
 	handleLogin = async () => {
 		const { username, password } = this.state
 		const { profileStore, navigation, route } = this.props
 		const { initUserinfo, initHomeRecords } = route.params
-		const res = await profileStore.login({username, password})
-		console.log('res', res)
+		const res = await profileStore.login({ username, password })
 		if (res.code === -1) {
 			this.setState({
 				username: undefined,
@@ -68,7 +71,7 @@ class LoginScreen extends React.Component {
 
 	}
 
-render() {
+	render() {
 		const { username, password, warnText } = this.state
 		return (
 			<View style={styles.container}>
@@ -77,6 +80,7 @@ render() {
 					<TextInput
 						style={[styles.txtInput]}
 						placeholder="请输入用户昵称"
+						clearButtonMode={true}
 						value={username}
 						onChangeText={text => this.handleInput('username', text)}
 					/>
@@ -86,6 +90,8 @@ render() {
 					<TextInput
 						style={[styles.txtInput]}
 						placeholder="请输入用户昵称"
+						clearButtonMode={true}
+						secureTextEntry={true}
 						value={password}
 						onChangeText={text => this.handleInput('password', text)}
 					/>
@@ -93,7 +99,7 @@ render() {
 				{
 					warnText && (
 						<View style={styles.warn}>
-							<Text style={{color: 'red', fontSize: 12}}>{warnText}</Text>
+							<Text style={{ color: 'red', fontSize: 12 }}>{warnText}</Text>
 						</View>
 					)
 				}

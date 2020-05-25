@@ -122,6 +122,7 @@ export default class BudgetSetting extends React.Component {
 					<Text style={[styles.itemText]}>预算</Text>
 					<TextInput
 						value={total_budget}
+						clearButtonMode={true}
 						onChangeText={e => this.setTotalBudget(e)}
 						style={[styles.itemRight]}
 					/>

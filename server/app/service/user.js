@@ -61,7 +61,7 @@ class UserService extends Service {
 		console.log(res, ret)
 		return ret
 	}
-	async updateUserinfo(info) {
+	async updateUserinfo(info, userinfo) {
 		const { _id, ...params } = info
 		const res = await this.app.mysql.update('userinfo', params, {
 			where: {
@@ -74,6 +74,39 @@ class UserService extends Service {
 			},
 			columns: ['username']
 		})
+		if (params.username) {
+			const { username } = params
+			const oldUsername = userinfo.username
+			// 修改用户名，则账单作者和收支作者改变，外层并改变 cookie,session
+			const sqlbill = `update bill set author="${username}" where author="${oldUsername}"`
+			await this.app.mysql.query(sqlbill)
+
+			const sqlbills = `select members, bill_id from bills where members like "%${oldUsername}%"`
+			const billsInfo = await this.app.mysql.query(sqlbills)
+			billsInfo.map(async item => {
+				let { members, bill_id } = item
+				members = members.split(',')
+				const idx = members.indexOf(oldUsername)
+				if (idx !== -1) {
+					members[idx] = username
+					members = members.join(',')
+					const updatebills = `update bills set members="${members}" where bill_id="${bill_id}"`
+					await this.app.mysql.query(updatebills)
+				} else {
+					// 重复 修改无效
+					return {
+						code: -1,
+						username: oldUsername,
+						msg: '用户名已存在'
+					}
+				}
+
+			})
+			return {
+				code: 1,
+				username
+			}
+		}
 		return {
 			code: 1,
 			username: username[0].username
@@ -110,8 +143,8 @@ class UserService extends Service {
 		return data
 	}
 	async getSignDays(userinfo) {
-		const { _id } = userinfo
-		if (_id) {
+		if (userinfo && userinfo._id) {
+			const { _id } = userinfo
 			const info = await this.app.mysql.select('userinfo', {
 				where: {
 					_id

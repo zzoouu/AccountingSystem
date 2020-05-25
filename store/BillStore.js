@@ -1,6 +1,7 @@
 import { observable, action, toJS } from "mobx"
 import { post, get, del, put } from '../src/utils/fetch'
 import Router from '../router'
+import { getUserinfo } from '../src/utils/storage'
 // import storage from "../src/utils/storage"
 // import { incomeIcons, payIcons } from '../src/utils/const'
 
@@ -400,13 +401,20 @@ class BillStore {
 	@action
 	getBills = async () => {
 		try {
-			const res = await get({
-				url: Router.billUrl.bills,
-			})
-			console.log(res.data.bills)
-			this.bills = res.data.bills
+			const userinfo = await getUserinfo()
+			if (userinfo) {
+
+				const res = await get({
+					url: Router.billUrl.bills,
+				})
+				console.log(res.data.bills)
+				this.bills = res.data.bills
+			} else {
+				this.bills = []
+			}
 		} catch (e) {
 			console.log('e', e)
+			this.bills = []
 			return e
 		}
 	}

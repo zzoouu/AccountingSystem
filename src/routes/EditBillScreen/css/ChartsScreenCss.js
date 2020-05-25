@@ -6,24 +6,64 @@ export const styles = StyleSheet.create({
     container: {
         flex: 1,
         fontSize: 14,
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
     },
     dateModal: {
 		flex: 0,
-		height: height * 0.25,
-		marginTop: height * (1 - 0.25),
-		backgroundColor: '#ffffff'
+        // height: height * 0.15,
+        height: 102,
+		marginTop: height * 0.26,
+        backgroundColor: '#ffffff',
+        alignItems: 'center',
+        width: width * 0.7,
+        marginLeft: width * 0.15,
+        borderColor: '#DEDEDE',
+        borderWidth: 1,
+        borderRadius: 8,
 	},
 	dateModalHead: {
 		flexDirection: 'row',
-		justifyContent: 'space-between',
+		justifyContent: 'center',
 		alignItems: 'center',
-		height: 40,
-		backgroundColor: '#AEEEEE',
-		paddingLeft: 12,
-		paddingRight: 12
-	},
-	dateModalTime: {
+        height: 40,
+        backgroundColor: '#fff',
+    },
+    selfText: {
+        // color: 'blue',
+        width: width * 0.35,
+        textAlign: 'center',
+        fontSize: 16,
+    },
+    selfModal: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        height: 60,
+        width: width * 0.7,
+        borderBottomColor: '#EED5D2',
+        borderBottomWidth: 0.8,
+        paddingLeft: 10,
+        paddingRight: 5,
+    },
+    selfadap: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 60
+    },
+    textinput: {
+        width: 60,
+        height: 30,
+        lineHeight: 30,
+        paddingLeft: 5,
+        paddingRight: 5,
+        borderRadius: 5,
+        textAlign: 'center',
+        
+        backgroundColor: '#EED5D2'
+    },
+
+    dateModalTime: {
 		borderRightWidth: 1,
 		borderRightColor: '#C1FFC1'
     },

@@ -57,22 +57,23 @@ export const formatBillRecords = (records) => {
 		let arr = []
 		let data = []
 		if (records.length) {
-			// let flag = records[0].record_date.substr(0, 10)
-			let flag = records[0].record_date.substr(0, 7)
+			let flag = records[0].record_date.substr(0, 10)
+			// let flag = records[0].record_date.substr(0, 7)
 			records.map((record, index) => {
 				const date = record.record_date
-				// let time = date.substr(0, 10) // 按日划分
-				let time = date.substr(0, 7)
+				let time = date.substr(0, 10) // 按日划分
+				// let time = date.substr(0, 7)
 				data.push(record)
 				if ((flag !== time) || (index === records.length - 1)) {
 					obj.title = flag
-					obj.data = data
+					obj.data = data.slice(0, data.length - 1)
 					flag = time
 					arr.push(obj)
 					data = []
 					obj = {}
 				}
 			})
+			console.log(records)
 		}
 		return arr
 }

@@ -29,12 +29,15 @@ import { inject, observer } from 'mobx-react'
 import { billColors } from './utils/const'
 import billStore from '../store/BillStore'
 import { observe } from 'mobx'
+import storage from './utils/storage'
 const Stack = createStackNavigator()
 
 
 @inject(["budgetStore"])
 @observer
 class StackContainer extends React.Component {
+  async componentDidMount() {
+  }
   render() {
     return (
       <Stack.Navigator
@@ -309,7 +312,7 @@ class BillContainer extends React.Component {
           component={BillInfo}
           options={{
             title: '账本详情',
-            headerLeft: () => <Ionicons onPress={() => { this.props.navigation.goBack() }} name="ios-arrow-round-back" size={30} />,
+            headerLeft: () => <Ionicons onPress={() => { this.props.navigation.navigate('Bills') }} name="ios-arrow-round-back" size={30} />,
             headerLeftContainerStyle: {
               paddingLeft: 8,
               width: 50
@@ -349,7 +352,16 @@ class BillContainer extends React.Component {
           component={RecordInfo}
           options={{
             title: '记录详情',
-            headerLeft: () => <Ionicons onPress={() => { this.props.navigation.navigate('BillInfo') }} name="ios-arrow-round-back" size={30} />,
+            headerLeft: () => <Ionicons 
+            onPress={() => { 
+              const { state } = this.props.route
+              if (state) {
+                this.props.navigation.navigate('BillInfo')
+              } else {
+                this.props.navigation.goBack() 
+              }
+            }} 
+              name="ios-arrow-round-back" size={30} />,
             headerLeftContainerStyle: {
               paddingLeft: 8,
               width: 50

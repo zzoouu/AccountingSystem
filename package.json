@@ -20,6 +20,7 @@
     "egg-cors": "2.2.3",
     "egg-mysql": "3.0.0",
     "fetch": "1.1.0",
+    "localStorage": "1.0.4",
     "mobx": "5.15.4",
     "mobx-react": "6.1.8",
     "moment": "2.25.3",

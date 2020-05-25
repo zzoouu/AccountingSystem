@@ -158,7 +158,7 @@ export class Budget extends React.Component {
 	getItemInfo = (label, icon) => {
 		const { recordsByName } = this.state
 		// const recordsByName = this.formatData()
-		const { budgetStore } = this.props
+		const { budgetStore  } = this.props
 		const budgetItems = toJS(budgetStore.budgetItems)
 		let percent = 0
 		let remain = 0
@@ -218,8 +218,12 @@ export class Budget extends React.Component {
 								style={styles.progress}
 							/>
 							<View style={styles.progressLabel}>
-								<Text style={styles.progressRate}>0.0</Text>
-								<Text style={[styles.progressRate, { textAlign: 'right' }]}>1.0</Text>
+								{/* <Text style={styles.progressRate}>0.0</Text> */}
+								{
+									this.getProgress(budgetSettings.total_budget) > 1 &&
+								<Text style={[styles.progressRate, {color: '#FF4040', textAlign: 'center'}]}>预算已超额~</Text>
+								}
+								{/* <Text style={[styles.progressRate, { textAlign: 'right' }]}>1.0</Text> */}
 							</View>
 						</View>
 					</View>
@@ -227,8 +231,10 @@ export class Budget extends React.Component {
 						<FlatList
 							data={toJS(billStore.payiconArr)}
 							renderItem={({ item }) => {
+								const len = Object.keys(budgetSettings).length
 								const res = this.getItemInfo(item.label, item.icon)
-								const { budgetMoney, percent, remain, setFlag, budgetId } = res
+								let { budgetMoney, percent, remain, setFlag, budgetId } = res
+								setFlag = len ? setFlag : true
 								return (
 									<View
 										keyExtractor={(item, index) => index.toString()}
@@ -249,7 +255,7 @@ export class Budget extends React.Component {
 												}
 											</View>
 											<Progress.Bar
-												progress={Number(percent)}
+												progress={len ? Number(percent) : 0}
 												color={percent > 1 ? 'red' : "orange"}
 												unfilledColor="#e0e0e0"
 												borderWidth={0}

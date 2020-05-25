@@ -1,4 +1,4 @@
-export const request = (url, method, body, callBackSuccess, callBackError) => {
+export const request = (url, method, body, callBackSuccess, callBackError, headers = {}) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			let config = {
@@ -7,11 +7,15 @@ export const request = (url, method, body, callBackSuccess, callBackError) => {
 			}
 			let params
 			if ((method === 'POST') || (method === 'PUT') || (method === 'DELETE')) {
+				const newHeader = Object.assign({}, headers, {
+					'Content-Type': 'application/json'
+				})
 				params = Object.assign({}, config, {
 					body: JSON.stringify(body),
-					headers: {
-						'Content-Type': 'application/json'
-					}
+					// headers: {
+					// 	'Content-Type': 'application/json'
+					// }
+					headers: newHeader
 				})
 			} else {
 				params = config
@@ -48,9 +52,10 @@ export const post = (params) => {
 		url,
 		body,
 		callBackSuccess,
-		callBackError
+		callBackError,
+		headers
 	} = params
-	return request(url, 'POST', body, callBackSuccess, callBackError)
+	return request(url, 'POST', body, callBackSuccess, callBackError, headers)
 }
 
 export const put = (params) => {

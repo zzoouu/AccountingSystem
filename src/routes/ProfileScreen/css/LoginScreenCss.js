@@ -15,7 +15,8 @@ const styles = StyleSheet.create({
 			borderBottomWidth: 0.8,
 		},
 		txtInput: {
-			marginLeft: 8
+			marginLeft: 8,
+			width: 280
 		},
 		button: {
 			marginLeft: 15,

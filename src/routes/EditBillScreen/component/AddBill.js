@@ -98,10 +98,11 @@ class AddBill extends React.Component {
 					<View style={styles.billName}>
 						<Text style={[styles.billNameText]}>账本名称</Text>
 						<TextInput
-							style={[styles.billNameInput, warnFlag && { color: 'red'} ]}
+							style={[styles.billNameInput, warnFlag && { color: 'red'}, { width: 250} ]}
 							// onChangeText={(text) => console.log(text)}
 							onChangeText={(text) => this.handleBillName(text)}
-							onFocus={() => {this.setState({warnFlag: false, billName: ''})}}
+						clearButtonMode={true}
+						onFocus={() => {this.setState({warnFlag: false, billName: ''})}}
 							value={billName}
 							placeholder={placeholder} />
 					</View>

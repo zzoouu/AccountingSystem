@@ -85,6 +85,7 @@ class IncomeScreen extends React.Component {
 				return
 			case '取消':
 				this.setState({
+					modalVisible: false,
 					numValue: numValue.substring(0, numValue.length - 1)
 				})
 				return
@@ -124,6 +125,7 @@ class IncomeScreen extends React.Component {
 		this.setState({
 			dateModalVisible: false
 		})
+		console.log(111)
 	}
 	handelSelectBill = () => {
 		// this.props.navigation.navigate('Bills', { choseType: 'select', getBillParams: this.getBillParams.bind(this) })

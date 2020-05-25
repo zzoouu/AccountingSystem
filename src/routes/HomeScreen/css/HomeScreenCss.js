@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
 		// backgroundColor: 'red'
 	},
 	header: {
-		backgroundColor: '#BBFFFF',
+		backgroundColor: '#FA8072',
 		flex: 0,
 		height: Util.size.height * 0.22,
 	},
@@ -49,9 +49,21 @@ const styles = StyleSheet.create({
 		fontSize: 14
 	},
 	dateTimePicker: {
-		width,
-		height: height * 0.2,
-		marginTop: height * 0.8 - 80,
+		
+		backgroundColor: 'white'
+	},
+	dateButton: {
+		// width,
+		// height: height * 0.2,
+		// marginTop: height * 0.8 - 80,
+		paddingLeft: 12,
+		paddingRight: 12,
+		marginTop: height * 0.75,
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		height: 40,
+		backgroundColor: '#fcaf17'
 	},
 	font24: {
 		fontSize: 16
@@ -89,6 +101,15 @@ const styles = StyleSheet.create({
 	},
 	listIcon: {
 		marginRight: 8
+	},
+	authorWrapper: {
+		flex: 0,
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginLeft: 20
+	},
+	authorText: {
+		marginLeft: 5
 	},
 	money: {
 		flex: 1,

@@ -85,7 +85,10 @@ class UserController extends Controller {
 	async updateUserinfo() {
 		const { ctx } = this
 		const info = ctx.request.body
-		const res = await ctx.service.user.updateUserinfo(info)
+		const { userinfo } = ctx.session
+		const res = await ctx.service.user.updateUserinfo(info, userinfo)
+		ctx.session.userinfo.username = res.username
+		ctx.cookies.set('userinfo', ctx.session.userinfo)
 		ctx.body = {
 			status: 200,
 			data: res

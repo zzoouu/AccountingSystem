@@ -4,7 +4,7 @@ const DWIDTH = Util.size.width
 const DHEIGHT = Util.size.height
 const IHEIGHT = 40
 const STACKHEADER = 60
-const MHEIGHT = DHEIGHT - (IHEIGHT + 10) * 3 - IHEIGHT - STACKHEADER - 20
+const MHEIGHT = DHEIGHT - (IHEIGHT + 10) * 4 - IHEIGHT * 2 - STACKHEADER - 20
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,

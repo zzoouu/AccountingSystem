@@ -18,6 +18,9 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		paddingLeft: 18
 	},
+	txtinput: {
+		width: 250
+	},
 	left8: {
 		marginLeft: 8,
 	},

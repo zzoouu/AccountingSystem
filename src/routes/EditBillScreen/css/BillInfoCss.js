@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
 		textAlign: 'right'
 	},
 	dateTimePicker: {
+		backgroundColor: 'white'
 	},
 	dateButton: {
 		paddingLeft: 12,
@@ -115,7 +116,7 @@ const styles = StyleSheet.create({
 	},
 	modalContent: {
 		flex: 1,
-		marginTop: height - 40 * 5
+		marginTop: height - 40 * 5,
 	},
 	editRecordItem: {
 		backgroundColor: '#ffffff',

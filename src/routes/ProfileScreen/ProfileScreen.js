@@ -70,6 +70,7 @@ class ProfileScreen extends React.Component {
 				key: 'userinfo'
 			})
 			status = res ? 1 : 0
+			console.log(res,'userinfo')
 			this.setState({
 				loginStatus: status,
 				userinfo: res
@@ -86,8 +87,11 @@ class ProfileScreen extends React.Component {
 	}
 	handlePress = (e, key) => {
 		if (key === 'Recommend') {
-			this.setState({
-				showModal: true
+			// this.setState({
+			// 	showModal: true
+			// })
+			this.props.navigation.navigate('ProfileContainer', {
+				screen: 'Recommend',
 			})
 		} else {
 			const { navigation, route: {
@@ -108,36 +112,37 @@ class ProfileScreen extends React.Component {
 		this.props.navigation.navigate('Home')
 	}
 	handleRecommend = async (e, label) => {
-		if (label === '取消') {
-			this.setState({
-				showModal: 'false'
-			})
-		} else {
-			try {
-				const result = await Share.share({
-					message: '这是 share 组件',
-					url: 'https://weixin.qq.com/'
-				})
-				if (result.action === Share.sharedAction) {
-					if (result.activityType) {
-						this.setState({
-							shareResult: 'shared with activitytype' + result.activityType
-						})
-					} else {
-						this.setState({
-							shareResult: 'result: shared'
-						})
-					}
-				} else if (result.action === Share.dismissedAction) {
-					this.setState({
-						shareResult: 'failed share'
-					})
-				}
-			} catch (e) {
-				console.log('e', e)
-			}
-			// console.log(this.state.shareResult)
-		}
+		this.props.navigation.navigate('Recommend')
+		// if (label === '取消') {
+		// 	this.setState({
+		// 		showModal: 'false'
+		// 	})
+		// } else {
+		// 	try {
+		// 		const result = await Share.share({
+		// 			message: '这是 share 组件',
+		// 			url: 'https://weixin.qq.com/'
+		// 		})
+		// 		if (result.action === Share.sharedAction) {
+		// 			if (result.activityType) {
+		// 				this.setState({
+		// 					shareResult: 'shared with activitytype' + result.activityType
+		// 				})
+		// 			} else {
+		// 				this.setState({
+		// 					shareResult: 'result: shared'
+		// 				})
+		// 			}
+		// 		} else if (result.action === Share.dismissedAction) {
+		// 			this.setState({
+		// 				shareResult: 'failed share'
+		// 			})
+		// 		}
+		// 	} catch (e) {
+		// 		console.log('e', e)
+		// 	}
+		// 	// console.log(this.state.shareResult)
+		// }
 	}
 	handleLogin = () => {
 		const { navigation, route: {
@@ -258,7 +263,7 @@ class ProfileScreen extends React.Component {
 							}}
 						/>
 					</View>
-					<Modal
+					{/* <Modal
 						style={styles.modal}
 						animationType="slide"
 						transparent={true}
@@ -279,7 +284,7 @@ class ProfileScreen extends React.Component {
 								}}
 							/>
 						</View>
-					</Modal>
+					</Modal> */}
 				</View>
 			</>
 		)

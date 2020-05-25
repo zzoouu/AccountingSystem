@@ -1,21 +1,16 @@
 import React from 'react'
 import { VictoryBar, VictoryChart, VictoryAxis, VictoryPie, VictoryTooltip, VictoryLine, LineSegment, VictoryZoomContainer, VictoryClipContainer, AxisWrapper, NoopComponent, LinearGradient, VictoryArea, VictoryScatter, Lollipop, VictoryBrushContainer } from 'victory-native'
-import { View, Text, ScrollView, Modal, TouchableHighlight, Button, TouchableWithoutFeedback, TouchableHighlightBase, FlatList } from 'react-native'
+import { View, Text, TextInput, ScrollView, Modal, TouchableHighlight, Button, TouchableWithoutFeedback, TouchableHighlightBase, FlatList } from 'react-native'
 import { inject, observer } from 'mobx-react'
 import { styles, progressInfo } from '../css/ChartsScreenCss'
 import SelfadaptModal from 'react-native-selfadapt-modal'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import MyIconFont from '../../../components/icon/iconfont'
-
-import RightArrow from '../../../components/RightArrow'
 import * as Progress from 'react-native-progress'
-
+import { monthData, yearData } from '../../../utils/const'
 import { toJS } from 'mobx'
 import moment from 'moment'
-import styels from '../../BudgetScreen/css/BudgetTypeCss'
 
 const colorScale = [
   '#FFEFD5', '#FFE4E1', '#FFE4B5', '#FFF8DC', '#FFDEAD', '#FFFF00',
@@ -36,13 +31,15 @@ class ChartsScreen extends React.Component {
       payData: [],
       isDatePicerVisible: false,
       pickDate: new Date(),
-      chartType: 'line',
+      chartType: 'pie',
       payType: 'pay',
       pieData: [],
       lineData: [],
       totalPay: 0,
       totalIncome: 0,
       totalReamin: 0,
+      chosedYear: new Date().getFullYear(),
+      chosedMonth: new Date().getMonth() + 1
     }
   }
   componentDidMount() {
@@ -63,9 +60,12 @@ class ChartsScreen extends React.Component {
     return str
   }
   formatData = (records, type, date) => {
-    const { payType, chartType, pickDate, dataByMonth, originData } = this.state
+    let { payType, chartType, pickDate, originData, dataByMonth, chosedMonth, chosedYear } = this.state
+    dataByMonth = toJS(dataByMonth)
+    // const { records: dataByMonth } = this.props.homeStore
     let { totalIncome, totalPay, totalReamin } = this.state
-    const choseDate = this.timeToString(pickDate, 2)
+    // const choseDate = this.timeToString(pickDate, 2)
+    // const choseDate = `${chosedYear}-${chosedMonth}}`
     let arr = []
     let incomeData = []
     let lineData = []
@@ -75,7 +75,17 @@ class ChartsScreen extends React.Component {
       // 根据选中时间筛选数据
       arr = dataByMonth.filter(record => {
         const date = record.title
-        const time = date.substr(0, 7)
+        let choseDate
+        let time
+        if (chosedMonth === '-') {
+          // 整年
+          time = date.substr(0, 4)
+          choseDate = chosedYear.toString()
+        } else {
+          // 按月
+          time = date.substr(0, 7)
+          choseDate = `${chosedYear}-${chosedMonth.toString().padStart(2, 0)}`
+        }
         return time === choseDate
       })
       arr = arr.length ? arr[0].data : []
@@ -84,35 +94,37 @@ class ChartsScreen extends React.Component {
       let dataByName = []
       let dataByTime = []
       arr.map(record => {
-        const { record_name, record_type, money, icon } = record
+        const { record_name, record_type, money, icon, number } = record
         if (!map[record_name]) {
           if (record_type === 1) {
             map[record_name] = {
-              inMoney: money,
+              inMoney: money / number,
               record_name,
               icon,
               inNum: 1,
               payNum: 0,
-              payMoney: 0
+              payMoney: 0,
+              number
             }
           } else {
             map[record_name] = {
-              payMoney: money,
+              payMoney: money / number,
               record_name,
               icon,
               payNum: 1,
               inNum: 0,
-              inMoney: 0
+              inMoney: 0,
+              number
             }
           }
         } else {
           if (record_type === 1) {
             // let preMoney = map[record_name].inMoney ? map[record_name].inMoney : 0
-            map[record_name].inMoney += money
+            map[record_name].inMoney += money / number
             map[record_name].inNum += 1
           } else {
             // let preMoney = map[record_name].payMoney ? map[record_name].payMoney : 0
-            map[record_name].payMoney += money
+            map[record_name].payMoney += money / number
             map[record_name].payNum += 1
           }
         }
@@ -175,29 +187,29 @@ class ChartsScreen extends React.Component {
       // linedata, 将数据按照时间每天计算支出收入
       let lineobj = {}
       arr.map(record => {
-        const { record_date, record_type, money } = record
+        const { record_date, record_type, money, number } = record
         let time = moment(record_date).format('MM-DD')
         if (!lineobj[time]) {
           if (record_type === 1) {
             lineobj[time] = {
               date: time,
               record_date,
-              income: money,
+              income: money / number,
               pay: 0
             }
           } else {
             lineobj[time] = {
               date: time,
               record_date,
-              pay: money,
+              pay: money / number,
               income: 0
             }
           }
         } else {
           if (record_type === 1) {
-            lineobj[time].income += money
+            lineobj[time].income += money / number
           } else {
-            lineobj[time].pay += money
+            lineobj[time].pay += money / number
           }
         }
       })
@@ -297,30 +309,23 @@ class ChartsScreen extends React.Component {
     return (money / denom)
     // return `${ret}%`
   }
+  handleSelfModal = (flag, data) => {
+    const { chosedMonth, chosedYear } = this.state
+    let key = flag === 'year' ? 'chosedYear' : 'chosedMonth'
+    console.log(data)
+    this.setState({
+      [key]: data
+    })
+  }
   render() {
-
-    const TestData = [
-      { type: 'income', name: '收入' },
-      { type: 'pay', name: '支出' },
-    ]
-    const { pickDate, chartType, payType, lineData, pieData, totalIncome, totalPay, totalReamin, incomeData, payData } = this.state
+    const { pickDate, chartType, payType, lineData, pieData, totalIncome, totalPay, totalReamin, incomeData, payData, chosedYear, chosedMonth } = this.state
     return (
-      <ScrollView style={styles.container} contentContainerStyle={{ alignItems: 'center' }}>
+      <ScrollView style={[styles.container]} contentContainerStyle={{ alignItems: 'center' }}>
         <View style={styles.commandsLine}>
-          {/* <Text style={styles.lineText}>类型: </Text>
-          <SelfadaptModal
-            style={styles.splitLine}
-            menuList={TestData}
-            containerStyle={styles.demeOneBtn}
-            content={this.state.demoOneValue}
-            onPress={(res) => this.doSelect(res, 'demoOneValue')}>
-            <Text style={styles.lineText}>{`收入`}</Text>
-          </SelfadaptModal> */}
-          {/* <Text style={styles.lineText, styles.splitLine}>时间: </Text> */}
           <View style={[styles.timePicker, styles.borderRadius]}>
             <TouchableWithoutFeedback
               onPress={() => this.handleSelectDate(true)}>
-              <Text style={styles.lineText}>{this.formatTime(pickDate)}</Text>
+              <Text style={styles.lineText}>{chosedMonth === '-' ? `${chosedYear}年` : `${chosedYear}年${chosedMonth}月`}</Text>
             </TouchableWithoutFeedback>
             <Ionicons name="ios-arrow-down" size={16} color="black" />
           </View>
@@ -359,18 +364,18 @@ class ChartsScreen extends React.Component {
         <View style={styles.charts}>
           <View style={[styles.chartLine, styles.borderRadius]}>
             <TouchableHighlight
-              style={[styles.chartTab, chartType === 'line' && styles.choseChartTab]}
-              onPress={() => this.handleChartType('line')}
-              underlayColor="#fff"
-            >
-              <Text>折线图</Text>
-            </TouchableHighlight>
-            <TouchableHighlight
               style={[styles.chartTab, chartType === 'pie' && styles.choseChartTab]}
               onPress={() => this.handleChartType('pie')}
               underlayColor="#fff"
             >
               <Text>饼图</Text>
+            </TouchableHighlight>
+            <TouchableHighlight
+              style={[styles.chartTab, chartType === 'line' && styles.choseChartTab]}
+              onPress={() => this.handleChartType('line')}
+              underlayColor="#fff"
+            >
+              <Text>折线图</Text>
             </TouchableHighlight>
           </View>
           {
@@ -488,25 +493,46 @@ class ChartsScreen extends React.Component {
           animationType="slide"
           visible={this.state.isDatePicerVisible}>
           <View style={styles.dateModal}>
+            <View style={styles.selfModal}>
+              <View style={styles.selfadap}>
+                <Text>年份：</Text>
+                <SelfadaptModal
+                  menuList={yearData().reverse()}
+                  onPress={res => this.handleSelfModal('year', res)}
+                >
+                  <Text style={styles.textinput}>{`${chosedYear}年`}</Text>
+                </SelfadaptModal>
+              </View>
+              <View style={styles.selfadap}>
+                <Text>月份：</Text>
+                <SelfadaptModal
+                  menuList={monthData}
+                  onPress={res => this.handleSelfModal('month', res)}
+                >
+                  <Text style={styles.textinput}>{chosedMonth !== '-' ? `${chosedMonth}月` : chosedMonth}</Text>
+                </SelfadaptModal>
+              </View>
+            </View>
             <View style={styles.dateModalHead}>
-              <TouchableHighlight onPress={() => { this.handleSelectDate(false); this.formatData() }}>
-                <Text>确定</Text>
+              <TouchableHighlight onPress={() => { this.handleSelectDate(false) }}>
+                <Text style={styles.selfText}>取消</Text>
               </TouchableHighlight>
-              <TouchableHighlight onPress={() => this.handleSelectDate(false)}>
-                <Text>取消</Text>
+              <TouchableHighlight onPress={() => { this.handleSelectDate(false); this.formatData() }}>
+                <Text style={styles.selfText}>确定</Text>
               </TouchableHighlight>
             </View>
-            <DateTimePicker
+            {/* <DateTimePicker
               value={this.state.pickDate}
               mode="date"
               display="default"
+              // format="YYYY-MM"
               maximumDate={new Date(2200, 1, 1)}
               minimumDate={new Date(2020, 1, 1)}
               neutralButtonLabel="clear"
               onChange={(e, date) => this.handleSelect(e, date)}
               locale="zh-Hans"
               style={styles.dateModalTime}
-            />
+            /> */}
           </View>
         </Modal>
       </ScrollView>
