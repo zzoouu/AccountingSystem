@@ -1362,6 +1362,11 @@ ansi-regex@^5.0.0:
   resolved "https://registry.npm.taobao.org/ansi-regex/download/ansi-regex-5.0.0.tgz#388539f55179bf39339c81af30a654d69f87cb75"
   integrity sha1-OIU59VF5vzkznIGvMKZU1p+Hy3U=
 
+ansi-regex@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/ansi-regex/-/ansi-regex-5.0.1.tgz#082cb2c89c9fe8659a311a53bd6a4dc5301db304"
+  integrity sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==
+
 ansi-styles@^2.2.1:
   version "2.2.1"
   resolved "https://registry.npm.taobao.org/ansi-styles/download/ansi-styles-2.2.1.tgz#b432dd3358b634cf75e1e4664368240533c1ddbe"
@@ -2218,6 +2223,11 @@ biskviit@1.0.1:
   dependencies:
     psl "^1.1.7"
 
+boolbase@^1.0.0, boolbase@~1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/boolbase/-/boolbase-1.0.0.tgz#68dff5fbe60c51eb37725ea9e3ed310dcc1e776e"
+  integrity sha1-aN/1++YMUes3cl6p4+0xDcwed24=
+
 bplist-creator@0.0.8:
   version "0.0.8"
   resolved "https://registry.npm.taobao.org/bplist-creator/download/bplist-creator-0.0.8.tgz#56b2a6e79e9aec3fc33bf831d09347d73794e79c"
@@ -2339,13 +2349,6 @@ camelcase@^5.0.0, camelcase@^5.3.1:
   resolved "https://registry.npm.taobao.org/camelcase/download/camelcase-5.3.1.tgz#e3c9b31569e106811df242f715725a1f4c494320"
   integrity sha1-48mzFWnhBoEd8kL3FXJaH0xJQyA=
 
-can-promise@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.npm.taobao.org/can-promise/download/can-promise-0.0.1.tgz#7a7597ad801fb14c8b22341dfec314b6bd6ad8d3"
-  integrity sha1-enWXrYAfsUyLIjQd/sMUtr1q2NM=
-  dependencies:
-    window-or-global "^1.0.1"
-
 capture-exit@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npm.taobao.org/capture-exit/download/capture-exit-2.0.0.tgz#fb953bfaebeb781f62898239dabb426d08a509a4"
@@ -2466,6 +2469,15 @@ cliui@^5.0.0:
     string-width "^3.1.0"
     strip-ansi "^5.2.0"
     wrap-ansi "^5.1.0"
+
+cliui@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/cliui/-/cliui-6.0.0.tgz#511d702c0c4e41ca156d7d0e96021f23e13225b1"
+  integrity sha512-t6wbgtoCXvAzst7QgXxJYqPt0usEfbgQdftEPbLL/cvv6HPE5VgvqCuAIDR0NgU52ds6rFwqrgakNLrHEjCbrQ==
+  dependencies:
+    string-width "^4.2.0"
+    strip-ansi "^6.0.0"
+    wrap-ansi "^6.2.0"
 
 clone@^1.0.2:
   version "1.0.4"
@@ -2709,6 +2721,29 @@ css-animation@^1.3.2:
   dependencies:
     babel-runtime "6.x"
     component-classes "^1.2.5"
+
+css-select@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/css-select/-/css-select-2.1.0.tgz#6a34653356635934a81baca68d0255432105dbef"
+  integrity sha512-Dqk7LQKpwLoH3VovzZnkzegqNSuAziQyNZUcrdDM401iY+R5NkGBXGmtO05/yaXQziALuPogeG0b7UAgjnTJTQ==
+  dependencies:
+    boolbase "^1.0.0"
+    css-what "^3.2.1"
+    domutils "^1.7.0"
+    nth-check "^1.0.2"
+
+css-tree@^1.0.0-alpha.39:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/css-tree/-/css-tree-1.1.3.tgz#eb4870fb6fd7707327ec95c2ff2ab09b5e8db91d"
+  integrity sha512-tRpdppF7TRazZrjJ6v3stzv93qxRcSsFmW6cX0Zm2NVKpxE1WV1HblnghVv9TreireHkqI/VDEsfolRF1p6y7Q==
+  dependencies:
+    mdn-data "2.0.14"
+    source-map "^0.6.1"
+
+css-what@^3.2.1:
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/css-what/-/css-what-3.4.2.tgz#ea7026fcb01777edbde52124e21f327e7ae950e4"
+  integrity sha512-ACUm3L0/jiZTqfzRM3Hi9Q8eZqd6IK37mMWPLz9PJxkLWllYeRf+EHUSHYEtFop2Eqytaq1FizFVh7XfBnXCDQ==
 
 cssom@0.3.x, "cssom@>= 0.3.2 < 0.4.0":
   version "0.3.8"
@@ -2963,10 +2998,28 @@ doctrine@^3.0.0:
   dependencies:
     esutils "^2.0.2"
 
+dom-serializer@0:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/dom-serializer/-/dom-serializer-0.2.2.tgz#1afb81f533717175d478655debc5e332d9f9bb51"
+  integrity sha512-2/xPb3ORsQ42nHYiSunXkDjPLBaEj/xTwUO4B7XCZQTRk7EBtTOPaygh10YAAh2OI1Qrp6NWfpAhzswj0ydt9g==
+  dependencies:
+    domelementtype "^2.0.1"
+    entities "^2.0.0"
+
 dom-walk@^0.1.0:
   version "0.1.2"
   resolved "https://registry.npm.taobao.org/dom-walk/download/dom-walk-0.1.2.tgz#0c548bef048f4d1f2a97249002236060daa3fd84"
   integrity sha1-DFSL7wSPTR8qlySQAiNgYNqj/YQ=
+
+domelementtype@1:
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/domelementtype/-/domelementtype-1.3.1.tgz#d048c44b37b0d10a7f2a3d5fee3f4333d790481f"
+  integrity sha512-BSKB+TSpMpFI/HOxCNr1O8aMOTZ8hT3pM3GQ0w/mWRmkhEDSFJkkyzz4XQsBV44BChwGkrDfMyjVD0eA2aFV3w==
+
+domelementtype@^2.0.1:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/domelementtype/-/domelementtype-2.3.0.tgz#5c45e8e869952626331d7aab326d01daf65d589d"
+  integrity sha512-OLETBj6w0OsagBwdXnPdN0cnMfF9opN69co+7ZrbfPGrdpPVNBUj02spi6B1N7wChLQiPn4CSH/zJvXw56gmHw==
 
 domexception@^1.0.1:
   version "1.0.1"
@@ -2974,6 +3027,14 @@ domexception@^1.0.1:
   integrity sha1-k3RCZEymoxJh7zbj7Gd/6AVYLJA=
   dependencies:
     webidl-conversions "^4.0.2"
+
+domutils@^1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/domutils/-/domutils-1.7.0.tgz#56ea341e834e06e6748af7a1cb25da67ea9f8c2a"
+  integrity sha512-Lgd2XcJ/NjEw+7tFvfKxOzCYKZsdct5lczQ2ZaQY8Djz7pfAD3Gbp8ySJWtreII/vDlMVmxwa6pHmdxIYgttDg==
+  dependencies:
+    dom-serializer "0"
+    domelementtype "1"
 
 ecc-jsbn@~0.1.1:
   version "0.1.2"
@@ -3012,6 +3073,11 @@ emoji-regex@^8.0.0:
   resolved "https://registry.npm.taobao.org/emoji-regex/download/emoji-regex-8.0.0.tgz#e818fd69ce5ccfcb404594f842963bf53164cc37"
   integrity sha1-6Bj9ac5cz8tARZT4QpY79TFkzDc=
 
+encode-utf8@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/encode-utf8/-/encode-utf8-1.0.3.tgz#f30fdd31da07fb596f281beb2f6b027851994cda"
+  integrity sha512-ucAnuBEhUK4boH2HjVYG5Q2mQyPorvv0u/ocS+zhdw0S8AlHYY+GOFhP1Gio5z4icpP2ivFSvhtFjQi8+T9ppw==
+
 encodeurl@~1.0.2:
   version "1.0.2"
   resolved "https://registry.npm.taobao.org/encodeurl/download/encodeurl-1.0.2.tgz#ad3ff4c86ec2d029322f5a02c3a9a606c95b3f59"
@@ -3030,6 +3096,11 @@ end-of-stream@^1.1.0:
   integrity sha1-WuZKX0UFe682JuwU2gyl5LJDHrA=
   dependencies:
     once "^1.4.0"
+
+entities@^2.0.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/entities/-/entities-2.2.0.tgz#098dc90ebb83d8dffa089d55256b351d34c4da55"
+  integrity sha512-p92if5Nz619I0w+akJrLZH0MX0Pb5DX39XOwQTtXSdQQOaYH03S1uIQp4mhOZtAXrxq4ViO67YTiLBo2638o9A==
 
 envinfo@^7.1.0:
   version "7.5.0"
@@ -4227,11 +4298,6 @@ isarray@1.0.0, isarray@~1.0.0:
   resolved "https://registry.npm.taobao.org/isarray/download/isarray-1.0.0.tgz#bb935d48582cba168c06834957a54a3e07124f11"
   integrity sha1-u5NdSFgsuhaMBoNJV6VKPgcSTxE=
 
-isarray@^2.0.1:
-  version "2.0.5"
-  resolved "https://registry.npm.taobao.org/isarray/download/isarray-2.0.5.tgz#8af1e4c1221244cc62459faf38940d4e644a5723"
-  integrity sha1-ivHkwSISRMxiRZ+vOJQNTmRKVyM=
-
 isexe@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npm.taobao.org/isexe/download/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
@@ -4910,6 +4976,11 @@ load-json-file@^4.0.0:
     pify "^3.0.0"
     strip-bom "^3.0.0"
 
+localStorage@1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/localStorage/-/localStorage-1.0.4.tgz#57dfa28084385f81431accb8ae24b196398223f7"
+  integrity sha512-r35zrihcDiX+dqWlJSeIwS9nrF95OQTgqMFm3FB2D/+XgdmZtcutZOb7t0xXkhOEM8a9kpuu7cc28g1g36I5DQ==
+
 locate-path@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npm.taobao.org/locate-path/download/locate-path-2.0.0.tgz#2b568b265eec944c6d9c0de9c3dbbbca0354cd8e"
@@ -5017,6 +5088,11 @@ map-visit@^1.0.0:
   integrity sha1-7Nyo8TFE5mDxtb1B8S80edmN+48=
   dependencies:
     object-visit "^1.0.0"
+
+mdn-data@2.0.14:
+  version "2.0.14"
+  resolved "https://registry.yarnpkg.com/mdn-data/-/mdn-data-2.0.14.tgz#7113fc4281917d63ce29b43446f701e68c25ba50"
+  integrity sha512-dn6wd0uw5GsdswPFfsgMp5NSB0/aDe6fK94YJV/AJDYXL6HVLWBsxeq7js7Ad+mU2K9LAlwpk6kN2D5mwCPVow==
 
 mem@^1.1.0:
   version "1.1.0"
@@ -5383,6 +5459,11 @@ mobx@5.15.4:
   resolved "https://registry.npm.taobao.org/mobx/download/mobx-5.15.4.tgz#9da1a84e97ba624622f4e55a0bf3300fb931c2ab"
   integrity sha1-naGoTpe6YkYi9OVaC/MwD7kxwqs=
 
+moment@2.29.2:
+  version "2.29.2"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.2.tgz#00910c60b20843bcba52d37d58c628b47b1f20e4"
+  integrity sha512-UgzG4rvxYpN15jgCmVJwac49h9ly9NurikMWGPdVxm8GZD6XjkKPxDTjQQ43gtGgnV3X0cAyWDdP2Wexoquifg==
+
 morgan@^1.9.0:
   version "1.9.1"
   resolved "https://registry.npm.taobao.org/morgan/download/morgan-1.9.1.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fmorgan%2Fdownload%2Fmorgan-1.9.1.tgz#0a8d16734a1d9afbc824b99df87e738e58e2da59"
@@ -5536,6 +5617,13 @@ npm-run-path@^2.0.0:
   integrity sha1-NakjLfo11wZ7TLLd8jV7GHFTbF8=
   dependencies:
     path-key "^2.0.0"
+
+nth-check@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/nth-check/-/nth-check-1.0.2.tgz#b2bd295c37e3dd58a3bf0700376663ba4d9cf05c"
+  integrity sha512-WeBOdju8SnzPN5vTUJYxYUxLeXpCaVP5i5e0LF8fg7WORF2Wd7wFX/pk0tYZk7s8T+J7VLy0Da6J1+wCT0AtHg==
+  dependencies:
+    boolbase "~1.0.0"
 
 nullthrows@^1.1.0:
   version "1.1.1"
@@ -5969,10 +6057,10 @@ pn@^1.1.0:
   resolved "https://registry.npm.taobao.org/pn/download/pn-1.1.0.tgz#e2f4cef0e219f463c179ab37463e4e1ecdccbafb"
   integrity sha1-4vTO8OIZ9GPBeas3Rj5OHs3Muvs=
 
-pngjs@^3.3.0:
-  version "3.4.0"
-  resolved "https://registry.npm.taobao.org/pngjs/download/pngjs-3.4.0.tgz#99ca7d725965fb655814eaf65f38f12bbdbf555f"
-  integrity sha1-mcp9clll+2VYFOr2XzjxK72/VV8=
+pngjs@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/pngjs/-/pngjs-5.0.0.tgz#e79dd2b215767fd9c04561c01236df960bce7fbb"
+  integrity sha512-40QW5YalBNfQo5yRYmiw7Yz6TKKVr3h6970B2YE+3fQpsWcrbj1PzJgxeJ19DRQjhMbKPIuMY8rFaXc8moolVw==
 
 posix-character-classes@^0.1.0:
   version "0.1.1"
@@ -6081,16 +6169,15 @@ punycode@^2.1.0, punycode@^2.1.1:
   resolved "https://registry.npm.taobao.org/punycode/download/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha1-tYsBCsQMIsVldhbI0sLALHv0eew=
 
-qrcode@1.2.0:
-  version "1.2.0"
-  resolved "https://registry.npm.taobao.org/qrcode/download/qrcode-1.2.0.tgz#330d24313fbf8d429a806091af9525250239e44a"
-  integrity sha1-Mw0kMT+/jUKagGCRr5UlJQI55Eo=
+qrcode@^1.3.2:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/qrcode/-/qrcode-1.5.0.tgz#95abb8a91fdafd86f8190f2836abbfc500c72d1b"
+  integrity sha512-9MgRpgVc+/+47dFvQeD6U2s0Z92EsKzcHogtum4QB+UNd025WOJSHvn/hjk9xmzj7Stj95CyUAs31mrjxliEsQ==
   dependencies:
-    can-promise "^0.0.1"
     dijkstrajs "^1.0.1"
-    isarray "^2.0.1"
-    pngjs "^3.3.0"
-    yargs "^8.0.2"
+    encode-utf8 "^1.0.3"
+    pngjs "^5.0.0"
+    yargs "^15.3.1"
 
 qs@~6.5.2:
   version "6.5.2"
@@ -6205,13 +6292,13 @@ react-native-progress@4.0.3:
     "@react-native-community/art" "^1.0.3"
     prop-types "^15.7.2"
 
-react-native-qrcode-svg@6.0.3:
-  version "6.0.3"
-  resolved "https://registry.npm.taobao.org/react-native-qrcode-svg/download/react-native-qrcode-svg-6.0.3.tgz#27b6a7a1df02c5bf10796fd97e8b55c0044dc0f8"
-  integrity sha1-J7anod8Cxb8QeW/ZfotVwARNwPg=
+react-native-qrcode-svg@6.0.6:
+  version "6.0.6"
+  resolved "https://registry.yarnpkg.com/react-native-qrcode-svg/-/react-native-qrcode-svg-6.0.6.tgz#bd4756cc0d76eeb3d162dca2f55eea80e3ebbe97"
+  integrity sha512-b+/teD+xj17VDujJzf956U2+9mX+gKwVJss2aqmhEIyjP7+TVOuE08D3UkzfOCWXE8gppcUTTz5gkY1NXgfwyQ==
   dependencies:
     prop-types "^15.5.10"
-    qrcode "1.2.0"
+    qrcode "^1.3.2"
 
 react-native-reanimated@1.7.0:
   version "1.7.0"
@@ -6230,6 +6317,11 @@ react-native-screens@2.2.0:
   dependencies:
     debounce "^1.2.0"
 
+react-native-selfadapt-modal@1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/react-native-selfadapt-modal/-/react-native-selfadapt-modal-1.1.3.tgz#c576ea6c9335250d29ee8f77633cbb37c84464d4"
+  integrity sha512-tY2FyLpdIZovluukkWsnPe3QriagIkPAVofYQBltQk0dEgqSIh/10K7uPdQOrnRWSLzrYqM4Q2eKbepwXPlgvg==
+
 react-native-storage@1.0.1:
   version "1.0.1"
   resolved "https://registry.npm.taobao.org/react-native-storage/download/react-native-storage-1.0.1.tgz#2c493875ff76ec301987c951a8302f3a54381241"
@@ -6237,6 +6329,14 @@ react-native-storage@1.0.1:
   dependencies:
     opencollective "^1.0.3"
     opencollective-postinstall "^2.0.2"
+
+react-native-svg@12.1.0:
+  version "12.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-12.1.0.tgz#acfe48c35cd5fca3d5fd767abae0560c36cfc03d"
+  integrity sha512-1g9qBRci7man8QsHoXn6tP3DhCDiypGgc6+AOWq+Sy+PmP6yiyf8VmvKuoqrPam/tf5x+ZaBT2KI0gl7bptZ7w==
+  dependencies:
+    css-select "^2.1.0"
+    css-tree "^1.0.0-alpha.39"
 
 react-native-tab-view@2.13.0:
   version "2.13.0"
@@ -7112,6 +7212,15 @@ string-width@^4.1.0:
     is-fullwidth-code-point "^3.0.0"
     strip-ansi "^6.0.0"
 
+string-width@^4.2.0:
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
+  integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
+  dependencies:
+    emoji-regex "^8.0.0"
+    is-fullwidth-code-point "^3.0.0"
+    strip-ansi "^6.0.1"
+
 string.prototype.trimleft@^2.1.1:
   version "2.1.1"
   resolved "https://registry.npm.taobao.org/string.prototype.trimleft/download/string.prototype.trimleft-2.1.1.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fstring.prototype.trimleft%2Fdownload%2Fstring.prototype.trimleft-2.1.1.tgz#9bdb8ac6abd6d602b17a4ed321870d2f8dcefc74"
@@ -7162,6 +7271,13 @@ strip-ansi@^6.0.0:
   integrity sha1-CxVx3XZpzNTz4G4U7x7tJiJa5TI=
   dependencies:
     ansi-regex "^5.0.0"
+
+strip-ansi@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
+  integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
+  dependencies:
+    ansi-regex "^5.0.1"
 
 strip-bom@^3.0.0:
   version "3.0.0"
@@ -7941,11 +8057,6 @@ which@^1.2.9, which@^1.3.0:
   dependencies:
     isexe "^2.0.0"
 
-window-or-global@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.npm.taobao.org/window-or-global/download/window-or-global-1.0.1.tgz#dbe45ba2a291aabc56d62cf66c45b7fa322946de"
-  integrity sha1-2+RboqKRqrxW1iz2bEW3+jIpRt4=
-
 word-wrap@~1.2.3:
   version "1.2.3"
   resolved "https://registry.npm.taobao.org/word-wrap/download/word-wrap-1.2.3.tgz#610636f6b1f703891bd34771ccb17fb93b47079c"
@@ -7972,6 +8083,15 @@ wrap-ansi@^5.1.0:
     ansi-styles "^3.2.0"
     string-width "^3.0.0"
     strip-ansi "^5.0.0"
+
+wrap-ansi@^6.2.0:
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-6.2.0.tgz#e9393ba07102e6c91a3b221478f0257cd2856e53"
+  integrity sha512-r6lPcBGxZXlIcymEu7InxDMhdW0KDxpLgoFLcguasxCaJ/SOIZwINatK9KY/tf+ZrlywOKU0UDj3ATXUBfxJXA==
+  dependencies:
+    ansi-styles "^4.0.0"
+    string-width "^4.1.0"
+    strip-ansi "^6.0.0"
 
 wrappy@1:
   version "1.0.2"
@@ -8098,6 +8218,14 @@ yargs-parser@^13.1.1:
     camelcase "^5.0.0"
     decamelize "^1.2.0"
 
+yargs-parser@^18.1.2:
+  version "18.1.3"
+  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-18.1.3.tgz#be68c4975c6b2abf469236b0c870362fab09a7b0"
+  integrity sha512-o50j0JeToy/4K6OZcaQmW6lyXXKhq7csREXcDwk2omFPJEwUNOVtJKvmDr9EI1fAJZUyZcRF7kxGBWmRXudrCQ==
+  dependencies:
+    camelcase "^5.0.0"
+    decamelize "^1.2.0"
+
 yargs-parser@^7.0.0:
   version "7.0.0"
   resolved "https://registry.npm.taobao.org/yargs-parser/download/yargs-parser-7.0.0.tgz#8d0ac42f16ea55debd332caf4c4038b3e3f5dfd9"
@@ -8139,24 +8267,22 @@ yargs@^13.2.2, yargs@^13.3.0:
     y18n "^4.0.0"
     yargs-parser "^13.1.1"
 
-yargs@^8.0.2:
-  version "8.0.2"
-  resolved "https://registry.npm.taobao.org/yargs/download/yargs-8.0.2.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fyargs%2Fdownload%2Fyargs-8.0.2.tgz#6299a9055b1cefc969ff7e79c1d918dceb22c360"
-  integrity sha1-YpmpBVsc78lp/355wdkY3Osiw2A=
+yargs@^15.3.1:
+  version "15.4.1"
+  resolved "https://registry.yarnpkg.com/yargs/-/yargs-15.4.1.tgz#0d87a16de01aee9d8bec2bfbf74f67851730f4f8"
+  integrity sha512-aePbxDmcYW++PaqBsJ+HYUFwCdv4LVvdnhBy78E57PIor8/OVvhMrADFFEDh8DHDFRv/O9i3lPhsENjO7QX0+A==
   dependencies:
-    camelcase "^4.1.0"
-    cliui "^3.2.0"
-    decamelize "^1.1.1"
-    get-caller-file "^1.0.1"
-    os-locale "^2.0.0"
-    read-pkg-up "^2.0.0"
+    cliui "^6.0.0"
+    decamelize "^1.2.0"
+    find-up "^4.1.0"
+    get-caller-file "^2.0.1"
     require-directory "^2.1.1"
-    require-main-filename "^1.0.1"
+    require-main-filename "^2.0.0"
     set-blocking "^2.0.0"
-    string-width "^2.0.0"
+    string-width "^4.2.0"
     which-module "^2.0.0"
-    y18n "^3.2.1"
-    yargs-parser "^7.0.0"
+    y18n "^4.0.0"
+    yargs-parser "^18.1.2"
 
 yargs@^9.0.0:
   version "9.0.1"
